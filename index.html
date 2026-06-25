@@ -59,7 +59,7 @@
 </div>
 <script>
     const animalsData = [
-  { name: "حنكور", sci: "Dromas ardeola", group: "طيور", status: "غير مهددLC", class: "status-lc" },
+  { name: "حنكور", sci: "Dromas ardeola", group: "طيور", status: "LC", class: "status-lc" },
   { name: "الكروان العسلي", sci: "Cursorius cursor", group: "طيور", status: "LC", class: "status-lc" },
   { name: "أبو اليسر مطوق", sci: "Glareola pratincola", group: "طيور", status: "LC", class: "status-lc" },
   { name: "أبو اليسر أسود الجناح", sci: "Glareola nordmanni", group: "طيور", status: "NT", class: "status-nt" },
@@ -470,7 +470,15 @@
         { name: "سحلية الجري (جنوبية)", sci: "Acanthodactylus boskianus asper", group: "زواحف", status: "غير مهدد (LC)", class: "status-lc" },
         { name: "سحلية شميدت", sci: "Acanthodactylus schmidti", group: "زواحف", status: "غير مهدد (LC)", class: "status-lc" }
     ];
-            const grid = document.getElementById('speciesGrid');
+        const statusMap = {
+        "LC": "غير مهدد",
+        "EN": "مهدد بالانقراض",
+        "NT": "قريب من التهديد",
+        "VU": "معرض للانقراض",
+        "CR": "مهدد بشدة",
+        "EX": "منقرض"
+    };
+ const grid = document.getElementById('speciesGrid');
     const searchInput = document.getElementById('searchInput');
 
     function render(filter = 'all', search = '') {
