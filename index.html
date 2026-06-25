@@ -49,6 +49,7 @@
             <button class="filter-btn" data-filter="نباتات">نباتات</button>
             <button class="filter-btn" data-filter="طيور">طيور</button>
             <button class="filter-btn" data-filter="خنافس">خنافس</button>
+         <button class="filter-btn" data-filter="خنافس داكنة">خنافس داكنة</button>
             <button class="filter-btn" data-filter="عث و فراش">عث و فراش</button>
             <button class="filter-btn" data-filter="أسماك">أسماك</button>
             <button class="filter-btn" data-filter="حشرات">حشرات</button>
@@ -60,6 +61,21 @@
 </div>
 <script>
     const animalsData = [
+     { name: "أديميا هيرتبيس", sci: "Adimia hirtipes", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "أميروفيا فيستيفا", sci: "Ammodonus festiva", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "بلابس كريبرا", sci: "Blaps cribra", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "بلابس ديبريسا", sci: "Blaps depressa", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "بلابس غراسيليس", sci: "Blaps gracilis", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "بلابس بوليتا", sci: "Blaps polita", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "ديتيرسوس ميتابولوس", sci: "Diteros metabolus", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "هيمالايا كاسبيكا", sci: "Himalaya caspica", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "ميكروسورا تينيو", sci: "Microsora tenuicollis", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "أوسوديريس تينيفير", sci: "Osodermis tenebrioides", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "بيزيلا غلوبوزا", sci: "Pimelia globosa", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "بيزيلا سيراتا", sci: "Pimelia serrata", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "بروتسوبلا كاسبيكا", sci: "Prosopeas caspica", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "سكاروس بروبينكوا", sci: "Scaurus propinquus", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
+{ name: "تريتوميوم ميتابولوس", sci: "Tritomium metabolus", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc" },
      { name: "ذبابة الجيفة الشائعة", sci: "Calliphora vicina", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "LC", class: "status-lc" },
 { name: "ذبابة الجيفة الزرقاء", sci: "Calliphora vomitoria", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
 { name: "ذبابة الجيفة المشعرة", sci: "Chrysomya albiceps", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
