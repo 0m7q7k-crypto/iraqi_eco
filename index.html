@@ -52,7 +52,7 @@
             <button class="filter-btn" data-filter="عث و فراش">عث و فراش</button>
             <button class="filter-btn" data-filter="أسماك">أسماك</button>
             <button class="filter-btn" data-filter="حشرات">حشرات</button>
-         <button class="filter-btn" data-filter="ذباب">ذباب</button>
+         <button class="filter-btn" data-filter="حشرات ثنائية الأجنحة">حشرات ثنائية الأجنحة</button>
         </div>
         <div class="counter" style="margin-top:15px;">عدد المخلوقات المعروضة: <span id="countVisible">0</span></div>
     </div>
@@ -82,7 +82,7 @@
 { name: "ذبابة اللحم هايمورو", sci: "Sarcophaga haemorrhoa", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
 { name: "ذبابة اللحم حمراء القرون", sci: "Sarcophaga ruficornis", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
 { name: "ذبابة اللحم المتجولة", sci: "Sarcophaga vagans", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
-{ name: "ذبابة سيبسيس الجانبية", sci: "Sepsis lateralis", group: "حشرات", status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة سيبسيس الجانبية", sci: "Sepsis lateralis", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
   { name: "حنكور", sci: "Dromas ardeola", group: "طيور", status: "LC", class: "status-lc" },
   { name: "الكروان العسلي", sci: "Cursorius cursor", group: "طيور", status: "LC", class: "status-lc" },
   { name: "أبو اليسر مطوق", sci: "Glareola pratincola", group: "طيور", status: "LC", class: "status-lc" },
@@ -668,13 +668,14 @@
         { name: "سحلية الجري (جنوبية)", sci: "Acanthodactylus boskianus asper", group: "زواحف", status: "غير مهدد (LC)", class: "status-lc" },
         { name: "سحلية شميدت", sci: "Acanthodactylus schmidti", group: "زواحف", status: "غير مهدد (LC)", class: "status-lc" }
     ];
-    const statusMap = {
+         const statusMap = {
         "LC": "غير مهدد",
         "EN": "مهدد بالانقراض",
         "NT": "قريب من التهديد",
         "VU": "معرض للانقراض",
         "CR": "مهدد بشدة",
-        "EX": "منقرض"
+        "EX": "منقرض",
+        "Forensic Importance": "ذات أهمية جنائية"
     };
 
     const grid = document.getElementById('speciesGrid');
@@ -682,8 +683,9 @@
 
     function render(filter = 'all', search = '') {
         const filteredData = animalsData.filter(item => {
-            const matchesFilter = (filter === 'all' || item.group === filter);
-            const matchesSearch = (item.name.includes(search) || item.sci.toLowerCase().includes(search.toLowerCase()));
+            const matchesFilter = (filter === 'all' || item.group.includes(filter));
+            const matchesSearch = (item.name.toLowerCase().includes(search.toLowerCase()) || 
+                                   item.sci.toLowerCase().includes(search.toLowerCase()));
             return matchesFilter && matchesSearch;
         });
 
@@ -708,7 +710,8 @@
     });
 
     searchInput.addEventListener('input', (e) => {
-        render(document.querySelector('.filter-btn.active').dataset.filter, e.target.value);
+        const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+        render(activeFilter, e.target.value);
     });
 
     render();
