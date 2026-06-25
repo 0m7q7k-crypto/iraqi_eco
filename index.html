@@ -469,7 +469,17 @@
         { name: "سحلية الجري (بوسك)", sci: "Acanthodactylus boskianus", group: "زواحف", status: "غير مهدد (LC)", class: "status-lc" },
         { name: "سحلية الجري (جنوبية)", sci: "Acanthodactylus boskianus asper", group: "زواحف", status: "غير مهدد (LC)", class: "status-lc" },
         { name: "سحلية شميدت", sci: "Acanthodactylus schmidti", group: "زواحف", status: "غير مهدد (LC)", class: "status-lc" }
-    ];grid.innerHTML = filteredData.map(item => `
+    ];
+    const grid = document.getElementById('speciesGrid');
+    const searchInput = document.getElementById('searchInput');
+
+    function render(filter = 'all', search = '') {
+        const filteredData = animalsData.filter(item => {
+            const matchesFilter = (filter === 'all' || item.group === filter);
+            const matchesSearch = (item.name.includes(search) || item.sci.toLowerCase().includes(search.toLowerCase()));
+            return matchesFilter && matchesSearch;
+        });
+ grid.innerHTML = filteredData.map(item => `
             <div class="species-card">
                 <img src="${item.img || 'images/default.jpg'}" alt="${item.name}" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:10px;">
                 
