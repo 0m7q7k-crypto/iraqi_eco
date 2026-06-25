@@ -52,6 +52,7 @@
             <button class="filter-btn" data-filter="عث و فراش">عث و فراش</button>
             <button class="filter-btn" data-filter="أسماك">أسماك</button>
             <button class="filter-btn" data-filter="حشرات">حشرات</button>
+         <button class="filter-btn" data-filter="حشرات ثنائية الأجنحة">حشرات ثنائية الأجنحة </button>
         </div>
         <div class="counter" style="margin-top:15px;">عدد المخلوقات المعروضة: <span id="countVisible">0</span></div>
     </div>
@@ -59,6 +60,29 @@
 </div>
 <script>
     const animalsData = [
+     { name: "ذبابة الجيفة الشائعة", sci: "Calliphora vicina", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة الجيفة الزرقاء", sci: "Calliphora vomitoria", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة الجيفة المشعرة", sci: "Chrysomya albiceps", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة الجيفة الشرقية", sci: "Chrysomya megacephala", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة كريسوميا بوتوريا", sci: "Chrysomya putoria", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة اللحم الخضراء", sci: "Lucilia sericata", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة شيما أكروسيتال", sci: "Schema acrosticale", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة المنازل الصغيرة", sci: "Fannia canicularis", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة هيدروتينا إينيسينس", sci: "Hydrotaea aenescens", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة هيدروتينا ألبوكيركي", sci: "Hydrotaea albuquerquei", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "الذبابة المنزلية", sci: "Musca domestica", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة العين", sci: "Musca sorbens", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة المخازن", sci: "Muscina stabulans", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة التابوت", sci: "Megaselia scalaris", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة الجبن", sci: "Allopiophila flavipes", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة اللحم الأفريقية", sci: "Sarcophaga africa", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة اللحم البيضاء الرأس", sci: "Sarcophaga albiceps", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة اللحم الجبلية", sci: "Sarcophaga altitudinis", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة اللحم الشائعة", sci: "Sarcophaga carnaria", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة اللحم هايمورو", sci: "Sarcophaga haemorrhoa", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة اللحم حمراء القرون", sci: "Sarcophaga ruficornis", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة اللحم المتجولة", sci: "Sarcophaga vagans", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
+{ name: "ذبابة سيبسيس الجانبية", sci: "Sepsis lateralis", group: ["حشرات", "حشرات ثنائية الأجنحة"], status: "Forensic Importance", class: "status-lc" },
   { name: "حنكور", sci: "Dromas ardeola", group: "طيور", status: "LC", class: "status-lc" },
   { name: "الكروان العسلي", sci: "Cursorius cursor", group: "طيور", status: "LC", class: "status-lc" },
   { name: "أبو اليسر مطوق", sci: "Glareola pratincola", group: "طيور", status: "LC", class: "status-lc" },
