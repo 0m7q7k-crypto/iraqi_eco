@@ -8,23 +8,22 @@
         body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; background-color: var(--bg-color); margin: 0; }
         .header { background: var(--dark-green); color: white; padding: 30px; text-align: center; border-radius: 20px; margin-bottom: 30px; }
         
-        /* صندوق بحث أصغر وأكثر تركيزاً */
         .search-wrapper { 
             display: flex; 
-            max-width: 700px; /* تم تقليل العرض */
+            max-width: 600px; 
             margin: 0 auto 30px; 
             background: white; 
             border-radius: 50px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
             border: 2px solid var(--dark-green); 
             overflow: hidden; 
-            height: 40px; /* تم تقليل الارتفاع */
+            height: 45px;
         }
         select { 
             border: none; 
-            padding: 8px; 
+            padding: 0 15px; 
             outline: none; 
-            border-left: 8px solid #eee; 
+            border-left: 1px solid #ddd; 
             font-weight: bold; 
             color: var(--dark-green); 
             background: #f9f9f9; 
@@ -77,9 +76,9 @@
     <div class="grid" id="dataGrid"></div>
 
 <script>
-    const database = [
-
-        
+    // قاعدة البيانات - أضف هنا كائناتك
+    
+    const database = [     
   {name: "أديميا هيرتبيس", sci: "Adimia hirtipes", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc"},
   {name: "أميروفيا فيستيفا", sci: "Ammodonus festiva", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc"},
   {name: "بلابس كريبرا", sci: "Blaps cribra", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc"},
@@ -764,9 +763,7 @@
 ];
  
         
-
-    function getStatusInfo(status) {
-        const s = status.toUpperCase();
+    const s = status.toUpperCase();
         if (s === 'EN' || s === 'مهدد بالانقراض') return { label: 'مهدد بالانقراض', class: 'status-EN' };
         return { label: 'غير مهدد', class: 'status-LC' };
     }
@@ -801,4 +798,16 @@
     function filterData() {
         const query = document.getElementById('search').value.toLowerCase();
         const cat = document.getElementById('categorySelect').value;
-        const filtered = 0   
+        const filtered = database.filter(item => {
+            return (item.name.toLowerCase().includes(query) || item.sci.toLowerCase().includes(query) || item.group.toLowerCase().includes(query)) && 
+                   (cat === 'الكل' || item.kingdom === cat);
+        });
+        render(filtered);
+    }
+
+    initCategories();
+    render(database);
+</script>
+</body>
+</html>
+    
