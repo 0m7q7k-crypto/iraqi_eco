@@ -1,70 +1,290 @@
-
-       <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشروع عراقي إيكو - التنوع الإحيائي في العراق</title>
+    <title>عراقي إيكو - قاعدة البيانات</title>
     <style>
-        :root { --primary-color: #1b4332; --secondary-color: #2d6a4f; --accent-color: #d4a373; --bg-color: #f4f6f4; --card-bg: #ffffff; --text-color: #212529; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 60px; }
-        header { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; text-align: center; padding: 50px 20px; border-bottom: 5px solid var(--accent-color); }
-        .container { max-width: 1000px; margin: 30px auto; padding: 0 15px; }
-        .controls-section { background: var(--card-bg); padding: 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        .search-box input { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 10px; margin-top: 10px; }
+        :root {
+            --dark-green: #1a4d2e;
+            --white: #ffffff;
+            --bg-color: #f0f4f0;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 15px; background-color: var(--bg-color); margin: 0; }
         
-        .filter-buttons { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 15px; }
-        .filter-btn { background-color: #f8f9fa; border: 2px solid #e0e0e0; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
-        .filter-btn.active { background-color: var(--secondary-color); color: white; border-color: var(--secondary-color); }
+        .header-container { 
+            background-color: var(--dark-green); 
+            padding: 20px; 
+            text-align: center; 
+            border-bottom-left-radius: 20px; 
+            border-bottom-right-radius: 20px;
+            margin-bottom: 20px;
+        }
+        h1 { color: var(--white); margin: 0; font-size: 1.5em; }
+        .subtitle { color: #d1e7dd; font-size: 0.85em; margin-top: 5px; }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            border: 2px solid var(--dark-green);
+            border-radius: 50px;
+            overflow: hidden;
+            background: var(--white);
+            height: 50px;
+        }
+
+        input { flex: 1; padding: 10px; border: none; outline: none; font-size: 15px; width: 50%; }
         
-        .species-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
-        .species-card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #eef2fe; }
-        .species-name { color: var(--primary-color); font-size: 1.3rem; margin-bottom: 5px; }
-        .scientific-name { font-style: italic; color: #666; margin-bottom: 10px; }
-        .status-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; color: white; display: inline-block; }
+        /* التعديل هنا لضمان ظهور كلمة الفئة بالكامل */
+        select { 
+            padding: 0 10px; 
+            border: none; 
+            border-left: 1px solid #ddd; 
+            background: #f9f9f9; 
+            color: var(--dark-green); 
+            font-weight: bold; 
+            cursor: pointer; 
+            outline: none;
+            width: 90px;
+            font-size: 14px;
+            text-align: center;
+            appearance: none; /* إخفاء السهم الافتراضي لتحسين الشكل */
+        }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 15px; 
+            max-width: 1200px;
+            margin: 0 auto;
+        }
         
-        /* ألوان الحالات */
-        .status-lc { background-color: #2b9348; }
-        .status-en { background-color: #f57c00; }
-      .status-ex { background-color: #000000; }
-           .status-cr { background-color: #c1121f; }
-    </style>
+        @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+        .card { 
+            background: var(--white); 
+            padding: 15px; 
+            border-radius: 15px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            text-align: center;
+            border: 2px solid var(--dark-green); 
+        }
+        
+        .card img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; }
+        .card h3 { margin: 5px 0; color: var(--dark-green); font-size: 1.1em; }
+        .sci { font-style: italic; color: #666; font-size: 0.85em; display: block; margin-bottom: 8px; }
+        .desc { font-size: 0.85em; color: #444; margin-bottom: 10px; line-height: 1.4; }
+        .status { padding: 4px 8px; border-radius: 5px; font-weight: bold; color: white; display: inline-block; font-size: 0.75em; }
+      
+        .status-lc { background-color: #38a169; } /* غير مهدد (Least Concern) - أخضر */
+        .status-nt { background-color: #85bb65; } /* قريب من التهديد (Near Threatened) - أخضر فاتح */
+        .status-vu { background-color: #e6b800; } /* معرض للتهديد (Vulnerable) - أصفر */
+        .status-en { background-color: #e53e3e; } /* مهدد بالانقراض (Endangered) - برتقالي محمر */
+        .status-cr { background-color: #c53030; } /* خطر انقراض أقصى (Critically Endangered) - أحمر غامق */
+        .status-ew { background-color: #7b2cbf; } /* منقرض في البرية (Extinct in the Wild) - بنفسجي */
+        .status-ex { background-color: #1a202c; } /* منقرض (Extinct) - أسود */
+        .status-ne { background-color: #718096; } /* غير مقيم/غير معروف (Not Evaluated) - رمادي */
+  </style>
 </head>
 <body>
 
-<header>
-    <h1>مشروع عراقي إيكو</h1>
-    <p>التنوع الإحيائي في العراق</p>
-</header>
-
-<div class="container">
-    <div class="controls-section">
-        <div class="search-box">
-            <label>البحث الذكي عن المخلوقات:</label>
-            <input type="text" id="searchInput" placeholder="اكتب الاسم...">
-        </div>
-        <div class="filter-buttons" id="filterBtns">
-            
-                <button class="filter-btn" data-filter="ثدييات">ثدييات</button>
-            <button class="filter-btn" data-filter="زواحف">زواحف</button>
-         <button class="filter-btn" data-filter="قشريات">قشريات</button>
-         <button class="filter-btn" data-filter="فطريات">فطريات</button>
-            <button class="filter-btn" data-filter="برمائيات">برمائيات</button>
-            <button class="filter-btn" data-filter="نباتات">نباتات</button>
-         <button class="filter-btn" data-filter="رعاشات">رعاشات</button>
-            <button class="filter-btn" data-filter="طيور">طيور</button>
-            <button class="filter-btn" data-filter="خنافس">خنافس</button>
-         <button class="filter-btn" data-filter="خنافس داكنة">خنافس داكنة</button>
-            <button class="filter-btn" data-filter="عث و فراش">عث و فراش</button>
-            <button class="filter-btn" data-filter="أسماك">أسماك</button>
-            <button class="filter-btn" data-filter="حشرات">حشرات</button>
-         <button class="filter-btn" data-filter="حشرات ثنائية الأجنحة">حشرات ثنائية الأجنحة</button>
-            </div>
-        <div class="counter" style="margin-top:15px;">عدد المخلوقات المعروضة: <span id="countVisible">0</span></div>
+    <div class="header-container">
+        <h1>عراقي إيكو</h1>
+        <div class="subtitle">قاعدة بيانات الكائنات الحية في العراق</div>
     </div>
-    <div class="species-grid" id="speciesGrid"></div>
-</div>
+    
+    <div class="search-container">
+        <select id="categorySelect" onchange="filterData()">
+            <option value="الكل">الفئة</option>
+            <option value="حيوان">حيوان</option>
+            <option value="ثدييات">ثدييات</option>
+            <option value="طيور">طيور</option>
+            <option value="زواحف">زواحف</option>
+            <option value="برمائيات">برمائيات</option>
+            <option value="حشرات">حشرات</option>
+            <option value="عناكب">عناكب</option>
+            <option value="عقارب">عقارب</option>
+            <option value="خنافس">خنافس</option>
+            <option value="خنافس داكنة">خنافس داكنة</option>
+            <option value="عث و فراش">عث و فراش</option>
+            <option value="رعاشات">رعاشات</option>
+            <option value="قشريات">قشريات</option>
+            <option value="فطريات">فطريات</option>
+            <option value="نبات">نبات</option>
+            <option value="أسماك">أسماك</option>
+            <option value="ذباب">ذباب</option>
+            <option value="بعوض">بعوض</option>
+        </select>
+        <input type="text" id="search" placeholder="ابحث عن اسم الكائن..." onkeyup="filterData()">
+    </div>
+
+    <div class="grid" id="dataGrid"></div>
+
+<script>
+    const database = [
+        { name: "حنكور", sci: "Dromas ardeola", group: "طيور", status: "غير مهدد", class: "status-lc", desc: "طائر بحري مميز.", img: "bird.jpg" },
+        { name: "أبو منجل الأقرع", sci: "Geronticus eremita", group: "طيور", status: "مهدد بالانقراض", class: "status-en", desc: "طائر نادر جداً.", img: "bird2.jpg" }
+    ];
+
+    function render(data) {
+        const grid = document.getElementById('dataGrid');
+        grid.innerHTML = data.map(item => `
+            <div class="card">
+                <img src="${item.img}" alt="${item.name}">
+                <h3>${item.name}</h3>
+                <span class="sci">${item.sci}</span>
+                <p class="desc">${item.desc}</p>
+                <div class="status ${item.class}">${item.status}</div>
+            </div>
+        `).join('');
+    }
+
+    function filterData() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const cat = document.getElementById('categorySelect').value;
+        const filtered = database.filter(item => {
+            const matchesSearch = item.name.toLowerCase().includes(query) || item.sci.toLowerCase().includes(query);
+            const matchesCat = (cat === 'الكل' || item.group === cat);
+            return matchesSearch && matchesCat;
+        });
+        render(filtered);
+    }
+
+    render(database);
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عراقي إيكو - قاعدة البيانات</title>
+    <style>
+        :root {
+            --dark-green: #1a4d2e;
+            --white: #ffffff;
+            --bg-color: #f0f4f0;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 15px; background-color: var(--bg-color); margin: 0; }
+        
+        .header-container { 
+            background-color: var(--dark-green); 
+            padding: 20px; 
+            text-align: center; 
+            border-bottom-left-radius: 20px; 
+            border-bottom-right-radius: 20px;
+            margin-bottom: 20px;
+        }
+        h1 { color: var(--white); margin: 0; font-size: 1.5em; }
+        .subtitle { color: #d1e7dd; font-size: 0.85em; margin-top: 5px; }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            border: 2px solid var(--dark-green);
+            border-radius: 50px;
+            overflow: hidden;
+            background: var(--white);
+            height: 50px;
+        }
+
+        input { flex: 1; padding: 10px; border: none; outline: none; font-size: 15px; width: 50%; }
+        
+        
+        select { 
+            padding: 0 10px; 
+            border: none; 
+            border-left: 1px solid #ddd; 
+            background: #f9f9f9; 
+            color: var(--dark-green); 
+            font-weight: bold; 
+            cursor: pointer; 
+            outline: none;
+            width: 90px;
+            font-size: 14px;
+            text-align: center;
+            appearance: none; 
+        }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 15px; 
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+        .card { 
+            background: var(--white); 
+            padding: 15px; 
+            border-radius: 15px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            text-align: center;
+            border: 2px solid var(--dark-green); 
+        }
+        
+        .card img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; }
+        .card h3 { margin: 5px 0; color: var(--dark-green); font-size: 1.1em; }
+        .sci { font-style: italic; color: #666; font-size: 0.85em; display: block; margin-bottom: 8px; }
+        .desc { font-size: 0.85em; color: #444; margin-bottom: 10px; line-height: 1.4; }
+        .status { padding: 4px 8px; border-radius: 5px; font-weight: bold; color: white; display: inline-block; font-size: 0.75em; }
+      
+        .status-lc { background-color: #38a169; } /* غير مهدد (Least Concern) - أخضر */
+        .status-nt { background-color: #85bb65; } /* قريب من التهديد (Near Threatened) - أخضر فاتح */
+        .status-vu { background-color: #e6b800; } /* معرض للتهديد (Vulnerable) - أصفر */
+        .status-en { background-color: #e53e3e; } /* مهدد بالانقراض (Endangered) - برتقالي محمر */
+        .status-cr { background-color: #c53030; } /* خطر انقراض أقصى (Critically Endangered) - أحمر غامق */
+        .status-ew { background-color: #7b2cbf; } /* منقرض في البرية (Extinct in the Wild) - بنفسجي */
+        .status-ex { background-color: #1a202c; } /* منقرض (Extinct) - أسود */
+        .status-ne { background-color: #718096; } /* غير مقيم/غير معروف (Not Evaluated) - رمادي */
+  </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <h1>عراقي إيكو</h1>
+        <div class="subtitle">قاعدة بيانات الكائنات الحية في العراق</div>
+    </div>
+    
+    <div class="search-container">
+        <select id="categorySelect" onchange="filterData()">
+            <option value="الكل">الفئة</option>
+            <option value="حيوان">حيوان</option>
+            <option value="ثدييات">ثدييات</option>
+            <option value="طيور">طيور</option>
+            <option value="زواحف">زواحف</option>
+            <option value="برمائيات">برمائيات</option>
+            <option value="حشرات">حشرات</option>
+            <option value="عناكب">عناكب</option>
+            <option value="عقارب">عقارب</option>
+            <option value="خنافس">خنافس</option>
+            <option value="خنافس داكنة">خنافس داكنة</option>
+            <option value="عث و فراش">عث و فراش</option>
+            <option value="رعاشات">رعاشات</option>
+            <option value="قشريات">قشريات</option>
+            <option value="فطريات">فطريات</option>
+            <option value="نبات">نبات</option>
+            <option value="أسماك">أسماك</option>
+            <option value="ذباب">ذباب</option>
+            <option value="بعوض">بعوض</option>
+        </select>
+        <input type="text" id="search" placeholder="ابحث عن اسم الكائن..." onkeyup="filterData()">
+    </div>
+
+    <div class="grid" id="dataGrid"></div>
 
 <script>
     
@@ -751,53 +971,33 @@
         { name: "سحلية شميدت", sci: "Acanthodactylus schmidti", group: "زواحف", status: "غير مهدد (LC)", class: "status-lc" }
     ];
    
-    const statusMap = {
-        "LC": "غير مهدد",
-        "EN": "مهدد بالانقراض",
-        "CR": "مهدد بشدة",
-        "VU": "معرض للانقراض",
-           "EX": "منقرض"
-    };
-
-    function render(filter = 'all', search = '') {
-        const grid = document.getElementById('speciesGrid');
-        const filteredData = animalsData.filter(item => {
-            const matchesFilter = (filter === 'all' || item.group.includes(filter));
-            const matchesSearch = (item.name.toLowerCase().includes(search.toLowerCase()) || 
-                                   item.sci.toLowerCase().includes(search.toLowerCase()));
-            return matchesFilter && matchesSearch;
-        });
-
-        grid.innerHTML = filteredData.map(item => {
-            // نتحقق إذا كان النص موجوداً في statusMap، إذا لم يكن موجوداً نعرض النص الأصلي الموجود في status
-            const displayStatus = statusMap[item.status] || item.status;
-            
-            return `
-            <div class="species-card">
-                <h2 class="species-name">${item.name}</h2>
-                <p class="scientific-name">${item.sci}</p>
-                <span class="status-badge ${item.class}">${displayStatus}</span>
-            </div>`;
-        }).join('');
-        
-        document.getElementById('countVisible').textContent = filteredData.length;
+    function render(data) {
+        const grid = document.getElementById('dataGrid');
+        grid.innerHTML = data.map(item => `
+            <div class="card">
+                <img src="${item.img}" alt="${item.name}">
+                <h3>${item.name}</h3>
+                <span class="sci">${item.sci}</span>
+                <p class="desc">${item.desc}</p>
+                <div class="status ${item.class}">${item.status}</div>
+            </div>
+        `).join('');
     }
 
-    // إعدادات الفلترة
-    document.getElementById('filterBtns').addEventListener('click', (e) => {
-        if(e.target.classList.contains('filter-btn')) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            render(e.target.dataset.filter, document.getElementById('searchInput').value);
-        }
-    });
+    function filterData() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const cat = document.getElementById('categorySelect').value;
+        const filtered = database.filter(item => {
+            const matchesSearch = item.name.toLowerCase().includes(query) || item.sci.toLowerCase().includes(query);
+            const matchesCat = (cat === 'الكل' || item.group === cat);
+            return matchesSearch && matchesCat;
+        });
+        render(filtered);
+    }
 
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-        const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
-        render(activeFilter, e.target.value);
-    });
-
-    render();
+    render(database);
 </script>
 </body>
 </html>
+
+    
