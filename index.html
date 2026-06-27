@@ -18,14 +18,8 @@
         .card .sci { font-size: 70%; color: #666; font-style: italic; margin-bottom: 8px; }
         
         .card .status { 
-            font-weight: bold; 
-            padding: 8px; 
-            border-radius: 8px; 
-            margin: 10px 0; 
-            width: 100%; 
-            text-align: center;
-            border: 1px solid currentColor;
-            background-color: #f0f0f0;
+            font-weight: bold; padding: 8px; border-radius: 8px; margin: 10px 0; width: 100%; 
+            text-align: center; border: 1px solid currentColor; background-color: #f0f0f0;
         }
         
         .status-lc { color: #2e7d32; } 
@@ -37,8 +31,6 @@
 
         .card .desc { font-size: 0.9em; height: 50px; overflow: hidden; margin-bottom: 15px; color: #333; }
         .btn-download { background: #1b5e20; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 50%; margin-bottom: 10px; }
-        
-        /* تنسيق شعار البطاقة الصغير */
         .card-footer-logo { font-size: 0.7em; color: #1b5e20; font-weight: bold; margin-top: 5px; border-top: 1px solid #ddd; padding-top: 5px; width: 100%; }
     </style>
 </head>
@@ -88,12 +80,23 @@
             });
         }
 
+        // تحسين دالة التنزيل
         function downloadCard(id) {
-            html2canvas(document.getElementById(id)).then(canvas => {
+            const cardElement = document.getElementById(id);
+            
+            html2canvas(cardElement, {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: "#ffffff",
+                scale: 2 // لضمان جودة عالية في الصورة
+            }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'بطاقة_كائن.png';
-                link.href = canvas.toDataURL();
+                link.download = 'بطاقة_عراقي_إيكو.png';
+                link.href = canvas.toDataURL('image/png');
                 link.click();
+            }).catch(err => {
+                console.error("خطأ في التنزيل:", err);
+                alert("حدث خطأ أثناء تنزيل البطاقة، تأكد من أن المتصفح يسمح بالعمليات المحلية.");
             });
         }
     </script>
