@@ -1,53 +1,53 @@
 
-   
     <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>عراقي إيكو - قاعدة البيانات العلمية</title>
     <style>
-        :root { --dark-green: #1a4d2e; --white: #ffffff; --bg-color: #f0f4f0; --accent: #4f7942; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; background-color: var(--bg-color); margin: 0; }
-        .header { background: var(--dark-green); color: white; padding: 30px; text-align: center; border-radius: 20px; margin-bottom: 30px; }
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
+        .header { text-align: center; margin-bottom: 30px; background: #06402b; color: white; padding: 20px; border-radius: 8px; }
+        .search-container { display: flex; justify-content: center; margin-bottom: 30px; }
+        .search-wrapper { display: flex; border: 2px solid #06402b; border-radius: 8px; overflow: hidden; width: 100%; max-width: 500px; }
+        #searchInput { border: none; padding: 10px; flex-grow: 1; outline: none; }
+        #categorySelect { border: none; border-right: 1px solid #06402b; padding: 10px; background: #f8f8f8; cursor: pointer; }
+        .card-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 15px; border-radius: 8px; border: 2px solid #06402b; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        .card img { max-width: 100%; height: 150px; object-fit: cover; border-radius: 4px; }
+        .latin { color: #555; font-style: italic; font-size: 0.9em; }
+        .group-tag { font-size: 0.75em; background: #e0f2f1; color: #06402b; padding: 2px 8px; border-radius: 10px; margin: 2px; display: inline-block; border: 1px solid #06402b; }
+        .status { font-weight: bold; margin-top: 10px; padding: 5px; border-radius: 4px; display: inline-block; }
         
-        .search-wrapper { 
-            display: flex; max-width: 600px; margin: 0 auto 30px; background: white; 
-            border-radius: 50px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-            border: 2px solid var(--dark-green); overflow: hidden; height: 45px;
-        }
-        select { border: none; padding: 0 15px; outline: none; border-left: 1px solid #ddd; font-weight: bold; color: var(--dark-green); background: #f9f9f9; cursor: pointer; }
-        input { flex: 1; padding: 0 15px; border: none; outline: none; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
-        .card { background: white; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; border: 3px solid var(--dark-green); transition: transform 0.2s; }
-        .card:hover { transform: translateY(-5px); }
-        .card img { width: 100%; height: 200px; object-fit: cover; background: #ddd; }
-        .card-body { padding: 15px; text-align: center; } 
-        
-        .status-tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.7em; font-weight: bold; margin-bottom: 10px; }
-        .status-LC { background: #d1fae5; color: #065f46; }
-        .status-EN { background: #fee2e2; color: #991b1b; }
+        /* ألوان حالات الحفظ الكاملة */
+        .status-lc { color: #2e7d32; } /* غير مهدد */
+        .status-nt { color: #827717; } /* قريب من التهديد */
+        .status-vu { color: #ef6c00; } /* مهدد بالانقراض */
+        .status-en { color: #d32f2f; } /* مهدد بشدة */
+        .status-cr { color: #b71c1c; } /* خطر أقصى */
+        .status-ew { color: #7b1fa2; } /* منقرض في البرية */
+        .status-ex { color: #212121; } /* منقرض */
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>عراقي إيكو</h1>
-        <p>قاعدة البيانات التفاعلية للتنوع البيولوجي في العراق</p>
-    </div>
+<div class="header">
+    <h1>عراقي إيكو</h1>
+    <p>قاعدة بيانات الكائنات الحية بالعراق</p>
+</div>
 
+<div class="search-container">
     <div class="search-wrapper">
-        <select id="categorySelect" onchange="filterData()">
-            <option value="الكل">جميع الأقسام</option>
+        <select id="categorySelect" onchange="updateView()">
+            <option value="الكل">الكل</option>
         </select>
-        <input type="text" id="search" placeholder="بحث..." onkeyup="filterData()">
+        <input type="text" id="searchInput" placeholder="ابحث عن اسم الكائن..." onkeyup="updateView()">
     </div>
+</div>
 
-    <div class="grid" id="dataGrid"></div>
+<div id="results" class="card-container"></div>
 
 <script>
-    
-    const database = [     
+    const db = [
+     
   {name: "أديميا هيرتبيس", sci: "Adimia hirtipes", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc"},
   {name: "أميروفيا فيستيفا", sci: "Ammodonus festiva", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc"},
   {name: "بلابس كريبرا", sci: "Blaps cribra", group: ["خنافس", "خنافس داكنة"], status: "LC", class: "status-lc"},
@@ -733,54 +733,50 @@
  
     
 
-    function getStatusInfo(status) {
-        const s = status.toUpperCase();
-        if (s.includes('EN') || s.includes('مهدد')) return { label: 'مهدد بالانقراض', class: 'status-EN' };
-        return { label: 'غير مهدد', class: 'status-LC' };
-    }
-
-    function initCategories() {
+    function updateCounts() {
         const select = document.getElementById('categorySelect');
-        const groups = [...new Set(database.map(item => item.group))];
-        groups.forEach(g => {
-            select.innerHTML += `<option value="${g}">${g}</option>`;
+        const allGroups = [...new Set(db.flatMap(item => item.group))].sort();
+        
+        select.innerHTML = `<option value="الكل">الكل (${db.length})</option>`;
+        allGroups.forEach(cat => {
+            let count = db.filter(item => item.group.includes(cat)).length;
+            let option = document.createElement('option');
+            option.value = cat;
+            option.text = `${cat} (${count})`;
+            select.appendChild(option);
         });
     }
 
-    function render(data) {
-        const grid = document.getElementById('dataGrid');
-        grid.innerHTML = data.map(item => {
-            const statusInfo = getStatusInfo(item.status);
-            return `
+    function updateView() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const cat = document.getElementById('categorySelect').value;
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = "";
+
+        db.filter(item => 
+            (cat === "الكل" || item.group.includes(cat)) && 
+            (item.name.includes(query) || item.sci.toLowerCase().includes(query))
+        ).forEach(item => {
+            const tags = item.group.map(g => `<span class="group-tag">${g}</span>`).join('');
+            resultsDiv.innerHTML += `
                 <div class="card">
-                    ${item.img ? `<img src="${item.img}" alt="${item.name}">` : ''}
-                    <div class="card-body">
-                        <div class="status-tag ${statusInfo.class}">${statusInfo.label}</div>
-                        <h3>${item.name}</h3>
-                        <i style="color: #666; font-size: 0.9em; display: block;">${item.sci}</i>
-                        ${item.desc ? `<p style="font-size: 0.85em; color: #444; margin: 10px 0;">${item.desc}</p>` : ''}
-                        <small style="color: var(--accent); font-weight:bold; display:block; margin-top:10px;">القسم: ${item.group}</small>
-                    </div>
+                    <img src="${item.img}" alt="${item.name}">
+                    <h3>${item.name}</h3>
+                    <p class="latin">${item.sci}</p>
+                    <div>${tags}</div>
+                    <p class="status ${item.class}">حالة الحفظ: ${item.status}</p>
                 </div>
             `;
-        }).join('');
-    }
-
-    function filterData() {
-        const query = document.getElementById('search').value.toLowerCase();
-        const cat = document.getElementById('categorySelect').value;
-        const filtered = database.filter(item => {
-            const matchText = item.name.toLowerCase().includes(query) || item.sci.toLowerCase().includes(query);
-            const matchCat = (cat === 'الكل' || item.group === cat);
-            return matchText && matchCat;
         });
-        render(filtered);
     }
 
-    initCategories();
-    render(database);
+    updateCounts();
+    updateView();
 </script>
+
 </body>
 </html>
+
+
     
     
