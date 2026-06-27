@@ -6,10 +6,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; background: #f9f9f9; text-align: center; }
-        header { margin-bottom: 30px; }
-        h1 { color: #1b5e20; margin: 0; }
         
-        #searchInput, #groupFilter { width: 80%; padding: 12px; margin-bottom: 15px; border: 2px solid #1b5e20; border-radius: 8px; box-sizing: border-box; }
+        /* تنسيق الشعار مع الخلفية الخضراء */
+        header { margin-bottom: 30px; background: #1b5e20; padding: 20px; border-radius: 15px; color: white; }
+        h1 { margin: 0; font-size: 2.5em; }
+        header p { margin: 5px 0 0 0; opacity: 0.9; }
+
+        /* حاوية البحث والقائمة */
+        .controls-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; }
+        #searchInput { flex: 2; padding: 12px; border: 2px solid #1b5e20; border-radius: 8px; }
+        #groupFilter { flex: 1; padding: 12px; border: 2px solid #1b5e20; border-radius: 8px; cursor: pointer; }
         
         #card-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
         .card { border: 2px solid #1b5e20; border-radius: 15px; padding: 15px; background: white; text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; }
@@ -42,11 +48,12 @@
         <p>قاعدة بيانات المخلوقات الحية في العراق</p>
     </header>
 
-    <input type="text" id="searchInput" placeholder="إبحث بالإسم العربي أو اللاتيني..." onkeyup="filterCards()">
-    
-    <select id="groupFilter" onchange="filterCards()">
-        <option value="الكل">أختر الفئة (الكل)</option>
-    </select>
+    <div class="controls-container">
+        <input type="text" id="searchInput" placeholder="إبحث بالإسم العربي أو اللاتيني..." onkeyup="filterCards()">
+        <select id="groupFilter" onchange="filterCards()">
+            <option value="الكل">أختر الفئة (الكل)</option>
+        </select>
+    </div>
 
     <div id="card-container"></div>
 
@@ -89,13 +96,11 @@
         function updateGroupDropdown(data) {
             const select = document.getElementById('groupFilter');
             const groups = {};
-
             data.forEach(item => {
                 item.group.forEach(g => {
                     groups[g] = (groups[g] || 0) + 1;
                 });
             });
-
             for (const [group, count] of Object.entries(groups)) {
                 const option = document.createElement('option');
                 option.value = group;
@@ -107,15 +112,12 @@
         function filterCards() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const groupQuery = document.getElementById('groupFilter').value;
-
             document.querySelectorAll('.card').forEach((card, index) => {
                 const item = creaturesData[index];
                 const name = item.name.toLowerCase();
                 const sci = item.sci.toLowerCase();
-                
                 const matchText = (name.includes(query) || sci.includes(query));
                 const matchGroup = (groupQuery === "الكل" || item.group.includes(groupQuery));
-
                 card.style.display = (matchText && matchGroup) ? "" : "none";
             });
         }
@@ -123,11 +125,7 @@
         async function downloadCard(id) {
             const cardElement = document.getElementById(id);
             html2canvas(cardElement, {
-                useCORS: true,
-                allowTaint: true,
-                logging: false,
-                backgroundColor: "#ffffff",
-                scale: 2
+                useCORS: true, allowTaint: true, logging: false, backgroundColor: "#ffffff", scale: 2
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'بطاقة_عراقي_إيكو.png';
@@ -135,10 +133,9 @@
                 link.click();
             }).catch(err => {
                 console.error("خطأ:", err);
-                alert("تعذر التنزيل تلقائياً، يرجى التأكد من أنك تستخدم المتصفح عبر خادم (Local Server).");
+                alert("تعذر التنزيل.");
             });
         }
     </script>
 </body>
 </html>
-
