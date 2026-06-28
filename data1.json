@@ -1,5 +1,455 @@
 [
   {
+    "name": "سنونو أبيض البطن",
+    "sci": "Delichon urbicum",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "صيفي ومهاجر يتكاثر في المنحدرات والأبنية.",
+    "img": "سنونو أبيض البطن.jpg"
+  },
+  {
+    "name": "سنونو أحمر العجز",
+    "sci": "Cecropis rufula",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "صيفي يتكاثر في الكهوف والجسور والمباني القديمة.",
+    "img": "سنونو أحمر العجز.jpg"
+  },
+  {
+    "name": "البلبل أبيض الخدين",
+    "sci": "Pycnonotus leucotis",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن شائع جداً في بساتين النخيل والحدائق.",
+    "img": "البلبل أبيض الخدين.jpg"
+  },
+  {
+    "name": "بلبل اصفر العجز",
+    "sci": "Pycnonotus xanthopygos",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "غير مؤكد (مشاهدات نادرة جداً في الغرب).",
+    "img": "بلبل اصفر العجز.jpg"
+  },
+  {
+    "name": "نقشارة الغاب",
+    "sci": "Phylloscopus sibilatrix",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مهاجر يمر عبر الحدائق والمناطق المشجرة.",
+    "img": "نقشارة الغاب.jpg"
+  },
+  {
+    "name": "نقشارة بونلي الشرقية",
+    "sci": "Phylloscopus orientalis",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "نادر/عرضي يمر خلال فصل الربيع.",
+    "img": "نقشارة بونلي الشرقية.jpg"
+  },
+  {
+    "name": "نقشارة هيوم",
+    "sci": "Phylloscopus humei",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "نادر/عرضي يظهر شتاءً في البساتين.",
+    "img": "نقشارة هيوم.jpg"
+  },
+  {
+    "name": "نقشارة باهتة",
+    "sci": "Phylloscopus neglectus",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "نادر/عرضي في الجبال والوديان الشمالية.",
+    "img": "نقشارة باهتة.jpg"
+  },
+  {
+    "name": "نقشارة الصفصاف",
+    "sci": "Phylloscopus trochilus",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مهاجر شائع يمر عبر الأشجار والشجيرات.",
+    "img": "نقشارة الصفصاف.jpg"
+  },
+  {
+    "name": "نقشارة جبلية",
+    "sci": "Phylloscopus sindianus",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "نادر/عرضي يظهر في المناطق المرتفعة.",
+    "img": "نقشارة جبلية.jpg"
+  },
+  {
+    "name": "نقشارة شائعة",
+    "sci": "Phylloscopus collybita",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "شتوي شائع جداً في كل أنواع الغطاء النباتي.",
+    "img": "نقشارة شائعة.jpg"
+  },
+  {
+    "name": "نمنمة الشجر",
+    "sci": "Scotocerca Inquieta",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن في المناطق الصحراوية والوديان الجافة.",
+    "img": "نمنمة الشجر.jpg"
+  },
+  {
+    "name": "هازجة سيتي",
+    "sci": "Cettia cetti",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن في القصب والشجيرات الكثيفة قرب الماء.",
+    "img": "هازجة سيتي.jpg"
+  },
+  {
+    "name": "عصفور طويل الذيل",
+    "sci": "Aegithalos caudatus",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن في غابات الجوز والبلوط شمال العراق.",
+    "img": "عصفور طويل الذيل.jpg"
+  },
+  {
+    "name": "هازجة مقلنسة اوراسية",
+    "sci": "Sylvia atricapilla",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "شتوي ومهاجر في الحدائق والمناطق المشجرة.",
+    "img": "هازجة مقلنسة اوراسية.jpg"
+  },
+  {
+    "name": "هازجة الحدائق",
+    "sci": "Sylvia borin",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مهاجر يمر عبر البساتين والغابات.",
+    "img": "هازجة الحدائق.jpg"
+  },
+  {
+    "name": "هازجة موشحة",
+    "sci": "Curruca nisoria",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مهاجر يمر عبر شجيرات الشوك والمزارع.",
+    "img": "هازجة موشحة.jpg"
+  },
+  {
+    "name": "هازجة بيضاء الحنجرة صغرى",
+    "sci": "Curruca curruca",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "شتوي ومهاجر شائع في البساتين والحدائق.",
+    "img": "هازجة بيضاء الحنجرة صغرى.jpg"
+  },
+  {
+    "name": "هازجة حدائقية شرقية",
+    "sci": "Curruca crassirostris",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "صيفي يتكاثر في التلال والمنحدرات المشجرة.",
+    "img": "هازجة حدائقية شرقية.jpg"
+  },
+  {
+    "name": "هازجة الصحراء",
+    "sci": "Curruca nana",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "شتوي في المناطق الصحراوية ذات الشجيرات.",
+    "img": "هازجة الصحراء.jpg"
+  },
+  {
+    "name": "هازجة منتري الرأساء",
+    "sci": "Curruca mystacea",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "صيفي ومهاجر يتكاثر في البساتين والأهوار.",
+    "img": "هازجة منتري الرأساء.jpg"
+  },
+  {
+    "name": "هازجة سردينيا",
+    "sci": "Curruca melanocephala",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "نادر/عرضي يظهر شتاءً.",
+    "img": "هازجة سردينيا.jpg"
+  },
+  {
+    "name": "هازجة بيضاء الحنجرة الكبرى",
+    "sci": "Curruca communis",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مهاجر يمر عبر السهول والتلال المشجرة.",
+    "img": "هازجة بيضاء الحنجرة الكبرى.jpg"
+  },
+  {
+    "name": "هازجة أم نظارة",
+    "sci": "Curruca conspicillata",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "نادر/عرضي في المناطق الجافة.",
+    "img": "هازجة أم نظارة.jpg"
+  },
+  {
+    "name": "ثرثار العراق",
+    "sci": "Argya altirostris",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن حصري في أهوار جنوب ووسط العراق.",
+    "img": "ثرثار العراق.jpg"
+  },
+  {
+    "name": "الثرثار الأفغاني",
+    "sci": "Argya huttoni",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن في البساتين والمناطق شبه الصحراوية.",
+    "img": "الثرثار الأفغاني.jpg"
+  },
+  {
+    "name": "صعو أصفر العرف",
+    "sci": "Regulus regulus",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "نادر/عرضي يظهر شتاءً في غابات الشمال.",
+    "img": "صعو أصفر العرف.jpg"
+  },
+  {
+    "name": "متسلق الحيطان",
+    "sci": "Tichodroma muraria",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "شتوي في المنحدرات الجبلية الوعرة.",
+    "img": "متسلق الحيطان.jpg"
+  },
+  {
+    "name": "خازن البندق الصخري الغربي",
+    "sci": "Sitta neumayer",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن شائع في الجبال الصخرية بشمال العراق.",
+    "img": "خازن البندق الصخري الغربي.jpg"
+  },
+  {
+    "name": "خازن البندق الصخري الشرقي",
+    "sci": "Sitta tephronota",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن في الوديان والمنحدرات الجبلية.",
+    "img": "خازن البندق الصخري الشرقي.jpg"
+  },
+  {
+    "name": "خازن البندق الأوراسي",
+    "sci": "Sitta europaea",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن في غابات البلوط الكثيفة.",
+    "img": "خازن البندق الأوراسي.jpg"
+  },
+  {
+    "name": "صعو اوراسي (نمنمة)",
+    "sci": "Troglodytes troglodytes",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن في الغابات الشمالية وشتاوي في الوسط.",
+    "img": "صعو اوراسي (نمنمة).jpg"
+  },
+  {
+    "name": "غطاس أبيض الحنجرة",
+    "sci": "Cinclus cinclus",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "نادر/عرضي قرب الجداول الجبلية السريعة.",
+    "img": "غطاس أبيض الحنجرة.jpg"
+  },
+  {
+    "name": "زرزور شائع",
+    "sci": "Sturnus vulgaris",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "شتوي بأعداد هائلة في المزارع والمدن.",
+    "img": "زرزور شائع.jpg"
+  },
+  {
+    "name": "زرزور وردي",
+    "sci": "Pastor roseus",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مهاجر يمر بأسراب ضخمة في الربيع.",
+    "img": "زرزور وردي.jpg"
+  },
+  {
+    "name": "زرزور أبقع هندي",
+    "sci": "Gracupica contra",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "غير مؤكد (مشاهدات محدودة جداً).",
+    "img": "زرزور أبقع هندي.jpg"
+  },
+  {
+    "name": "مينة شائعة",
+    "sci": "Acridotheres tristis",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن دخيل انتشر في كل مدن العراق.",
+    "img": "مينة شائعة.jpg"
+  },
+  {
+    "name": "غراب مينا الأنهار",
+    "sci": "Acridotheres ginginianus",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "نادر/عرضي في المناطق الحضرية.",
+    "img": "غراب مينا الأنهار.jpg"
+  },
+  {
+    "name": "سمنة الدبق",
+    "sci": "Turdus viscivorus",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن في غابات الجبال العالية.",
+    "img": "سمنة الدبق.jpg"
+  },
+  {
+    "name": "سمنة مغردة",
+    "sci": "Turdus philomelos",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "شتوي شائع في البساتين والحدائق.",
+    "img": "سمنة مغردة.jpg"
+  },
+  {
+    "name": "سمنة حمراء الجناح",
+    "sci": "Turdus iliacus",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "نادر/عرضي يظهر شتاءً في الشمال.",
+    "img": "سمنة حمراء الجناح.jpg"
+  },
+  {
+    "name": "شحرور",
+    "sci": "Turdus merula",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مستوطن في الشمال والوسط وقرب المياه.",
+    "img": "شحرور.jpg"
+  },
+  {
+    "name": "سمنة الحقول",
+    "sci": "Turdus pilaris",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "شتوي يظهر في السهول والمناطق المشجرة.",
+    "img": "سمنة الحقول.jpg"
+  },
+  {
+    "name": "سمنة مطوقة",
+    "sci": "Turdus torquatus",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "شتوي في الجبال والوديان الصخرية.",
+    "img": "سمنة مطوقة.jpg"
+  },
+  {
+    "name": "سمنة سوداء الحنجرة",
+    "sci": "Turdus atrogularis",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "شتوي نادر في المناطق الريفية.",
+    "img": "سمنة سوداء الحنجرة.jpg"
+  },
+  {
+    "name": "خاطف الذباب المرقط",
+    "sci": "Muscicapa striata",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "صيفي يتكاثر في البساتين والحدائق.",
+    "img": "خاطف الذباب المرقط.jpg"
+  },
+  {
+    "name": "أبو حناء الأحراش",
+    "sci": "Cercotrichas galactotes",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "صيفي شائع في البساتين والحدائق.",
+    "img": "أبو حناء الأحراش.jpg"
+  },
+  {
+    "name": "أبو الحناء الأوروبي",
+    "sci": "Erithacus rubecula",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "شتوي شائع في الأماكن الظليلة والحدائق.",
+    "img": "أبو الحناء الأوروبي.jpg"
+  },
+  {
+    "name": "أبو الحناء أبيض الحنجرة",
+    "sci": "Irania gutturalis",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "صيفي يتكاثر في منحدرات الجبال المشجرة.",
+    "img": "أبو الحناء أبيض الحنجرة.jpg"
+  },
+  {
+    "name": "العندليب (هزار)",
+    "sci": "Luscinia luscinia",
+    "group": ["طيور"],
+    "status": "LC",
+    "class": "status-lc",
+    "desc": "مهاجر يمر عبر البساتين الكثيفة.",
+    "img": "العندليب (هزار).jpg"
+  },
+  {
     "name": "مرزة الدجاج",
     "sci": "Circus cyaneus",
     "group": ["طيور"],
