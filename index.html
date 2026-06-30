@@ -9,13 +9,13 @@
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
-        .admin-section { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 10px; display: none; border: 1px solid #ddd; }
+        .admin-section { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 10px; display: none; border: 2px solid #3498db; }
     </style>
 </head>
 <body>
 
     <h1>كائنات العراق الحية</h1>
-    <button onclick="document.getElementById('admin-section').style.display='block'">نشر كائن جديد</button>
+    <button onclick="showAdmin()">نشر كائن جديد</button>
 
     <div id="admin-section" class="admin-section">
         <h3>إضافة كائن</h3>
@@ -23,7 +23,7 @@
         <input type="text" id="latName" placeholder="الاسم اللاتيني"><br>
         <input type="text" id="imgUrl" placeholder="رابط الصورة"><br>
         <textarea id="desc" placeholder="الوصف"></textarea><br>
-        <button onclick="saveToDatabase()">حفظ</button>
+        <button onclick="saveToDatabase()">حفظ البيانات</button>
     </div>
 
     <div id="species-container" class="grid"></div>
@@ -33,8 +33,35 @@
         const SUPABASE_KEY = 'sb_publishable_YBIUORkoL9OPbirhy5Bbbg_GUorO4_a';
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        function showAdmin() {
+            document.getElementById('admin-section').style.display = 'block';
+        }
+
+        async function saveToDatabase() {
+            const code = prompt("أدخل رمز النشر:");
+            if (code !== "150") {
+                alert("رمز خطأ!");
+                return;
+            }
+
+            const { data, error } = await supabase.from('species').insert([{
+                arabic_name: document.getElementById('arName').value,
+                latin_name: document.getElementById('latName').value,
+                image_url: document.getElementById('imgUrl').value,
+                description: document.getElementById('desc').value
+            }]);
+            
+            if (error) {
+                alert("خطأ في الاتصال: " + error.message);
+            } else {
+                alert("تم الحفظ بنجاح!");
+                location.reload(); // تحديث الصفحة لرؤية الكائن الجديد
+            }
+        }
+
         async function loadSpecies() {
-            const { data } = await supabase.from('species').select('*');
+            const { data, error } = await supabase.from('species').select('*');
+            if (error) console.error("خطأ في الجلب:", error);
             const container = document.getElementById('species-container');
             if (data) {
                 container.innerHTML = data.map(item => `
@@ -48,25 +75,8 @@
             }
         }
 
-        async function saveToDatabase() {
-            const code = prompt("أدخل رمز النشر:");
-            if (code !== "150") return alert("رمز خطأ");
-
-            const { error } = await supabase.from('species').insert([{
-                arabic_name: document.getElementById('arName').value,
-                latin_name: document.getElementById('latName').value,
-                image_url: document.getElementById('imgUrl').value,
-                description: document.getElementById('desc').value
-            }]);
-            
-            if (error) alert("خطأ: " + error.message);
-            else {
-                alert("تم الحفظ!");
-                loadSpecies();
-            }
-        }
-
         loadSpecies();
     </script>
 </body>
 </html>
+
