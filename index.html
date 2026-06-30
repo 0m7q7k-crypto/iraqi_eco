@@ -6,36 +6,40 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: sans-serif; background: white; padding: 20px; }
-        .logo { text-align: center; color: #27ae60; font-size: 30px; font-weight: bold; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
-        .card img { width: 100%; height: 150px; object-fit: cover; }
+        .logo { text-align: center; color: #27ae60; font-size: 30px; font-weight: bold; margin-bottom: 20px; }
+        .admin-box { background: #f4f4f4; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #ddd; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card { border: 1px solid #eee; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 5px; }
+        input, select, button { padding: 10px; margin: 5px; border-radius: 5px; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
+
     <div class="logo">☘️ عراقي إيكو</div>
     
-    <!-- لوحة النشر -->
-    <div style="background:#f4f4f4; padding:15px; border-radius:8px; margin-bottom:20px;">
+    <div class="admin-box">
+        <h3>نشر كائن جديد في القاعدة:</h3>
         <input type="text" id="aName" placeholder="الاسم العربي">
         <input type="text" id="lName" placeholder="الاسم اللاتيني">
         <input type="text" id="iUrl" placeholder="رابط الصورة">
         <select id="cat">
             <option value="ثدييات">ثدييات</option>
             <option value="طيور">طيور</option>
+            <option value="زواحف">زواحف</option>
         </select>
-        <button onclick="publish()">نشر الكائن</button>
+        <button onclick="publish()">نشر البطاقة</button>
     </div>
 
     <div id="container" class="grid"></div>
 
     <script>
-        // الرابط والرمز العام (Publishable)
+        // إعدادات الاتصال بمشروعك
         const SUPABASE_URL = 'https://rmqtopxawrrgntcqqnpa.supabase.co';
         const SUPABASE_KEY = 'Sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX';
-        
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // وظيفة النشر
         async function publish() {
             const { error } = await supabase.from('species').insert([{
                 arabic_name: document.getElementById('aName').value,
@@ -44,22 +48,19 @@
                 category: document.getElementById('cat').value
             }]);
             
-            if (error) {
-                alert("خطأ: " + error.message);
-            } else {
-                alert("تم النشر بنجاح!");
-                location.reload();
-            }
+            if (error) { alert("خطأ: " + error.message); }
+            else { alert("تم النشر بنجاح!"); location.reload(); }
         }
 
+        // وظيفة جلب البيانات وعرضها
         async function load() {
-            const { data, error } = await supabase.from('species').select('*');
+            const { data } = await supabase.from('species').select('*');
             if (data) {
                 document.getElementById('container').innerHTML = data.map(item => `
                     <div class="card">
                         <img src="${item.image_url}">
                         <h3>${item.arabic_name}</h3>
-                        <p>${item.latin_name}</p>
+                        <p><i>${item.latin_name}</i></p>
                     </div>
                 `).join('');
             }
@@ -68,4 +69,3 @@
     </script>
 </body>
 </html>
-
