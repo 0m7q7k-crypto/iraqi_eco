@@ -7,9 +7,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
-        .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 10px; }
-        .admin-panel { margin-top: 50px; padding: 20px; background: #f4f4f4; border-radius: 10px; }
+        .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 10px; background: #f9f9f9; }
+        .admin-section { margin-top: 40px; padding: 20px; border: 2px dashed #ccc; border-radius: 10px; }
         input { display: block; width: 100%; margin: 10px 0; padding: 10px; }
+        button { padding: 10px 20px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -17,18 +18,19 @@
     <h1>قائمة الكائنات الحية</h1>
     <div id="list">جاري تحميل البيانات...</div>
 
-    <div id="admin-panel" class="admin-panel">
+    <div id="admin-section" class="admin-section">
         <div id="login-area">
             <h3>تسجيل دخول المشرف للنشر:</h3>
             <input type="email" id="email" placeholder="البريد الإلكتروني">
             <input type="password" id="password" placeholder="كلمة السر">
             <button onclick="login()">دخول للنشر</button>
         </div>
+
         <div id="publish-area" style="display:none;">
             <h3>إضافة كائن جديد:</h3>
             <input type="text" id="name" placeholder="اسم الكائن">
             <button onclick="publish()">نشر الكائن</button>
-            <button onclick="logout()">خروج</button>
+            <button onclick="logout()">خروج من لوحة التحكم</button>
         </div>
     </div>
 
@@ -40,30 +42,50 @@
 
         // تحميل البيانات للجميع
         async function loadData() {
-            const { data } = await supabase.from('species').select('*');
-            document.getElementById('list').innerHTML = data.map(i => `<div class="card"><h2>${i.name_ar}</h2></div>`).join('');
+            const { data, error } = await supabase.from('species').select('*');
+            if (error) {
+                document.getElementById('list').innerText = "خطأ في تحميل البيانات.";
+            } else {
+                document.getElementById('list').innerHTML = data.map(i => `
+                    <div class="card">
+                        <h2>${i.name_ar || 'بدون اسم'}</h2>
+                    </div>
+                `).join('');
+            }
         }
 
         // تسجيل الدخول
         async function login() {
-            const { error } = await supabase.auth.signInWithPassword({
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value
-            });
-            if (error) alert("خطأ: " + error.message);
-            else location.reload();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            
+            if (error) {
+                alert("خطأ في تسجيل الدخول: " + error.message);
+            } else {
+                location.reload();
+            }
         }
 
         // النشر
         async function publish() {
-            const { error } = await supabase.from('species').insert([{ name_ar: document.getElementById('name').value }]);
-            if (error) alert("خطأ: " + error.message);
-            else { alert("تم النشر!"); location.reload(); }
+            const name = document.getElementById('name').value;
+            const { error } = await supabase.from('species').insert([{ name_ar: name }]);
+            if (error) {
+                alert("خطأ في النشر: " + error.message);
+            } else {
+                alert("تم النشر بنجاح!");
+                location.reload();
+            }
         }
 
-        async function logout() { await supabase.auth.signOut(); location.reload(); }
+        // تسجيل الخروج
+        async function logout() {
+            await supabase.auth.signOut();
+            location.reload();
+        }
 
-        // التحقق من حالة الدخول عند فتح الصفحة
+        // التحقق من الحالة عند التشغيل
         window.addEventListener('load', async () => {
             loadData();
             const { data } = await supabase.auth.getSession();
@@ -75,4 +97,3 @@
     </script>
 </body>
 </html>
-
