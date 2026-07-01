@@ -2,37 +2,39 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>كاشف الأعطال</title>
+    <title>عراقي إيكو - القائمة الكاملة</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .item { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; background: #f9f9f9; }
+    </style>
 </head>
 <body>
-    <h1>نتائج الفحص:</h1>
-    <div id="debug" style="background:#eee; padding:10px; border:1px solid #999;"></div>
+    <h1>قائمة الكائنات</h1>
+    <div id="container">جاري جلب البيانات...</div>
 
     <script>
-        const debug = document.getElementById('debug');
-        debug.innerText = "بدء الاتصال...";
+        const supabase = window.supabase.createClient(
+            'https://rmqtopxawrrgntcqqnpa.supabase.co', 
+            'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX'
+        );
 
-        try {
-            const supabase = window.supabase.createClient(
-                'https://rmqtopxawrrgntcqqnpa.supabase.co', 
-                'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX'
-            );
-
-            debug.innerText += "\nتم إنشاء العميل. جاري الطلب...";
-
-            supabase.from('species').select('*').then(res => {
-                if (res.error) {
-                    debug.innerText = "خطأ في القاعدة: " + res.error.message;
-                } else {
-                    debug.innerText = "نجاح! وصلت " + res.data.length + " قطعة بيانات.";
-                }
-            }).catch(err => {
-                debug.innerText = "خطأ في الشبكة: " + err.message;
-            });
-        } catch (e) {
-            debug.innerText = "خطأ في الكود: " + e.message;
+        async function fetchAll() {
+            const container = document.getElementById('container');
+            const { data, error } = await supabase.from('species').select('*');
+            
+            if (error) {
+                container.innerText = "خطأ: " + error.message;
+            } else {
+                container.innerHTML = data.map(item => `
+                    <div class="item">
+                        <h3>${item.name_ar || 'اسم غير موجود'}</h3>
+                        <p>${item.description || 'لا توجد تفاصيل'}</p>
+                    </div>
+                `).join('');
+            }
         }
+        fetchAll();
     </script>
 </body>
 </html>
