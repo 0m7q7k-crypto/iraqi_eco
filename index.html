@@ -6,11 +6,18 @@
     <title>عراقي إيكو - Iraqi Eco</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
-        .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 10px; background: #f9f9f9; }
-        .admin-section { margin-top: 40px; padding: 20px; border: 2px dashed #ccc; border-radius: 10px; }
-        input { display: block; width: 100%; margin: 10px 0; padding: 10px; }
-        button { padding: 10px 20px; cursor: pointer; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f6; padding: 20px; line-height: 1.6; color: #333; }
+        h1 { text-align: center; color: #2e7d32; }
+        .card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-right: 5px solid #2e7d32; }
+        
+        /* تصميم لوحة التحكم */
+        #admin-panel { max-width: 500px; margin: 40px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #2e7d32; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        button:hover { background-color: #1b5e20; }
+        
+        /* إخفاء لوحة الإدارة */
+        #admin-panel { display: none; }
     </style>
 </head>
 <body>
@@ -18,19 +25,22 @@
     <h1>قائمة الكائنات الحية</h1>
     <div id="list">جاري تحميل البيانات...</div>
 
-    <div id="admin-section" class="admin-section">
+    <div style="text-align: center; margin-top: 50px;">
+        <button onclick="document.getElementById('admin-panel').style.display='block'" style="background:none; color:#777; border:none; text-decoration:underline;">تسجيل دخول الإدارة</button>
+    </div>
+
+    <div id="admin-panel">
         <div id="login-area">
-            <h3>تسجيل دخول المشرف للنشر:</h3>
+            <h3>تسجيل دخول المشرف</h3>
             <input type="email" id="email" placeholder="البريد الإلكتروني">
             <input type="password" id="password" placeholder="كلمة السر">
-            <button onclick="login()">دخول للنشر</button>
+            <button onclick="login()">دخول</button>
         </div>
-
         <div id="publish-area" style="display:none;">
-            <h3>إضافة كائن جديد:</h3>
+            <h3>إضافة كائن جديد</h3>
             <input type="text" id="name" placeholder="اسم الكائن">
             <button onclick="publish()">نشر الكائن</button>
-            <button onclick="logout()">خروج من لوحة التحكم</button>
+            <button onclick="logout()">خروج</button>
         </div>
     </div>
 
@@ -40,56 +50,37 @@
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcXRvcHhhd3JyZ250Y3FxbnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTIxMzQsImV4cCI6MjA5ODM2ODEzNH0.HoExHY9oNFdryWUC2u2UELLPfBNhH3P4L3zS03dvELA'
         );
 
-        // تحميل البيانات للجميع
         async function loadData() {
-            const { data, error } = await supabase.from('species').select('*');
-            if (error) {
-                document.getElementById('list').innerText = "خطأ في تحميل البيانات.";
-            } else {
-                document.getElementById('list').innerHTML = data.map(i => `
-                    <div class="card">
-                        <h2>${i.name_ar || 'بدون اسم'}</h2>
-                    </div>
-                `).join('');
-            }
+            const { data } = await supabase.from('species').select('*');
+            document.getElementById('list').innerHTML = data.map(i => `
+                <div class="card">
+                    <h2>${i.name_ar}</h2>
+                </div>
+            `).join('');
         }
 
-        // تسجيل الدخول
         async function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            
-            if (error) {
-                alert("خطأ في تسجيل الدخول: " + error.message);
-            } else {
-                location.reload();
-            }
+            const { error } = await supabase.auth.signInWithPassword({
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            });
+            if (error) alert("خطأ: " + error.message);
+            else location.reload();
         }
 
-        // النشر
         async function publish() {
-            const name = document.getElementById('name').value;
-            const { error } = await supabase.from('species').insert([{ name_ar: name }]);
-            if (error) {
-                alert("خطأ في النشر: " + error.message);
-            } else {
-                alert("تم النشر بنجاح!");
-                location.reload();
-            }
+            const { error } = await supabase.from('species').insert([{ name_ar: document.getElementById('name').value }]);
+            if (error) alert("خطأ: " + error.message);
+            else { alert("تم النشر!"); location.reload(); }
         }
 
-        // تسجيل الخروج
-        async function logout() {
-            await supabase.auth.signOut();
-            location.reload();
-        }
+        async function logout() { await supabase.auth.signOut(); location.reload(); }
 
-        // التحقق من الحالة عند التشغيل
         window.addEventListener('load', async () => {
             loadData();
             const { data } = await supabase.auth.getSession();
             if (data.session) {
+                document.getElementById('admin-panel').style.display = 'block';
                 document.getElementById('login-area').style.display = 'none';
                 document.getElementById('publish-area').style.display = 'block';
             }
@@ -97,3 +88,4 @@
     </script>
 </body>
 </html>
+
