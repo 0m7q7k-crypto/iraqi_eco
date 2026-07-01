@@ -2,48 +2,42 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>عراقي إيكو</title>
-    <!-- استدعاء مكتبة Supabase -->
+    <title>فحص نهائي - عراقي إيكو</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        body { font-family: sans-serif; padding: 20px; direction: rtl; }
-        .card { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
-    </style>
 </head>
 <body>
-    <h1>قائمة الكائنات</h1>
-    <div id="list">جاري تحميل البيانات...</div>
+    <h1>حالة الاتصال:</h1>
+    <div id="status">جاري المحاولة...</div>
 
     <script>
-        // إعداد الاتصال باستخدام المفتاح الصحيح الذي أرسلته
+        const statusDiv = document.getElementById('status');
+        
+        // 1. تعريف العميل
         const supabase = window.supabase.createClient(
             'https://rmqtopxawrrgntcqqnpa.supabase.co', 
             'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX'
         );
 
-        async function getData() {
+        // 2. محاولة جلب البيانات مع مراقبة الأخطاء
+        async function testConnection() {
             try {
-                // جلب البيانات من جدول species
-                const { data, error } = await supabase.from('species').select('*');
+                console.log("بدء طلب البيانات...");
+                const { data, error } = await supabase.from('species').select('*').range(0, 5);
                 
                 if (error) {
-                    document.getElementById('list').innerHTML = "خطأ في جلب البيانات: " + error.message;
-                    return;
-                }
-
-                if (data.length === 0) {
-                    document.getElementById('list').innerHTML = "لا توجد بيانات حالياً.";
+                    statusDiv.innerHTML = "<b style='color:red;'>خطأ في القاعدة:</b> " + error.message;
+                    console.error("Supabase Error Details:", error);
                 } else {
-                    document.getElementById('list').innerHTML = data.map(i => 
-                        `<div class="card">${i.name_ar}</div>`
-                    ).join('');
+                    statusDiv.innerHTML = "<b style='color:green;'>نجاح!</b> عدد البيانات التي وصلت: " + data.length;
+                    console.log("Data:", data);
                 }
             } catch (err) {
-                document.getElementById('list').innerHTML = "حدث خطأ غير متوقع: " + err.message;
+                statusDiv.innerHTML = "<b style='color:red;'>خطأ في المتصفح/الشبكة:</b> " + err.message;
+                console.error("Catch Error:", err);
             }
         }
 
-        getData();
+        testConnection();
     </script>
 </body>
 </html>
