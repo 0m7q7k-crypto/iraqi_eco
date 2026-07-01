@@ -1,16 +1,46 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<div id="test">بدء الاختبار...</div>
-<script>
-    const supabase = window.supabase.createClient(
-        'https://rmqtopxawrrgntcqqnpa.supabase.co', 
-        'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX'
-    );
-    
-    supabase.from('species').select('name_ar').limit(1)
-    .then(res => {
-        document.getElementById('test').innerText = JSON.stringify(res);
-    })
-    .catch(err => {
-        document.getElementById('test').innerText = "خطأ: " + err;
-    });
-</script>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>فحص نهائي</title>
+</head>
+<body>
+    <h1>حالة النظام:</h1>
+    <div id="output" style="border:1px solid #ccc; padding:15px; margin:10px;">جاري تحميل المكتبة...</div>
+
+    <script>
+        const output = document.getElementById('output');
+
+        // 1. تحميل المكتبة ديناميكياً
+        const script = document.createElement('script');
+        script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+        script.onload = () => {
+            output.innerText = "تم تحميل المكتبة. جاري الاتصال...";
+            runApp();
+        };
+        script.onerror = () => output.innerText = "خطأ في تحميل المكتبة.";
+        document.head.appendChild(script);
+
+        // 2. دالة تشغيل التطبيق
+        function runApp() {
+            try {
+                const supabase = supabase.createClient(
+                    'https://rmqtopxawrrgntcqqnpa.supabase.co', 
+                    'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX'
+                );
+
+                supabase.from('species').select('name_ar').limit(5)
+                .then(res => {
+                    if (res.error) {
+                        output.innerText = "خطأ في الاستعلام: " + res.error.message;
+                    } else {
+                        output.innerText = "نجاح! البيانات: " + JSON.stringify(res.data);
+                    }
+                });
+            } catch (e) {
+                output.innerText = "خطأ في التشغيل: " + e.message;
+            }
+        }
+    </script>
+</body>
+</html>
