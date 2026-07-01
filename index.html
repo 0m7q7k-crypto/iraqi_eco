@@ -2,12 +2,16 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>فحص الاتصال - عراقي إيكو</title>
+    <title>عراقي إيكو</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .card { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    </style>
 </head>
 <body>
-    <h1>حالة النظام:</h1>
-    <div id="status">جاري الفحص...</div>
+    <h1>قائمة الكائنات</h1>
+    <div id="list">يتم التحميل...</div>
 
     <script>
         const supabase = window.supabase.createClient(
@@ -15,22 +19,16 @@
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcXRvcHhhd3JyZ250Y3FxbnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTIxMzQsImV4cCI6MjA5ODM2ODEzNH0.HoExHY9oNFdryWUC2u2UELLPfBNhH3P4L3zS03dvELA'
         );
 
-        async function check() {
-            const statusDiv = document.getElementById('status');
+        async function getData() {
             try {
-                // محاولة جلب بيانات
                 const { data, error } = await supabase.from('species').select('*');
-                
-                if (error) {
-                    statusDiv.innerHTML = "<b style='color:red;'>خطأ في القاعدة:</b> " + error.message;
-                } else {
-                    statusDiv.innerHTML = "<b style='color:green;'>تم الاتصال بنجاح!</b><br> عدد الكائنات: " + data.length;
-                }
+                if (error) throw error;
+                document.getElementById('list').innerHTML = data.map(i => `<div class="card">${i.name_ar}</div>`).join('');
             } catch (err) {
-                statusDiv.innerHTML = "<b style='color:red;'>خطأ في الاتصال (قد يكون حظر شبكة):</b> " + err.message;
+                document.getElementById('list').innerHTML = "<b>خطأ تقني:</b> " + err.message;
             }
         }
-        check();
+        getData();
     </script>
 </body>
 </html>
