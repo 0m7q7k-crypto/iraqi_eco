@@ -2,45 +2,41 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>فحص نهائي</title>
+    <title>عراقي إيكو</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <h1>حالة النظام:</h1>
-    <div id="output" style="border:1px solid #ccc; padding:15px; margin:10px;">جاري تحميل المكتبة...</div>
+    <h1>قائمة الكائنات</h1>
+    <div id="output">جاري التحميل...</div>
 
     <script>
-        const output = document.getElementById('output');
+        // نستخدم supabase مباشرة (بدون window.)
+        // تأكد من استخدام المفتاح الصحيح الذي نسخته
+        const supabaseUrl = 'https://rmqtopxawrrgntcqqnpa.supabase.co';
+        const supabaseKey = 'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX';
+        
+        const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // 1. تحميل المكتبة ديناميكياً
-        const script = document.createElement('script');
-        script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
-        script.onload = () => {
-            output.innerText = "تم تحميل المكتبة. جاري الاتصال...";
-            runApp();
-        };
-        script.onerror = () => output.innerText = "خطأ في تحميل المكتبة.";
-        document.head.appendChild(script);
-
-        // 2. دالة تشغيل التطبيق
-        function runApp() {
+        async function loadData() {
             try {
-                const supabase = supabase.createClient(
-                    'https://rmqtopxawrrgntcqqnpa.supabase.co', 
-                    'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX'
-                );
-
-                supabase.from('species').select('name_ar').limit(5)
-                .then(res => {
-                    if (res.error) {
-                        output.innerText = "خطأ في الاستعلام: " + res.error.message;
-                    } else {
-                        output.innerText = "نجاح! البيانات: " + JSON.stringify(res.data);
-                    }
-                });
-            } catch (e) {
-                output.innerText = "خطأ في التشغيل: " + e.message;
+                const { data, error } = await client.from('species').select('*');
+                
+                if (error) {
+                    document.getElementById('output').innerText = "خطأ: " + error.message;
+                } else {
+                    document.getElementById('output').innerHTML = data.map(item => `
+                        <div style="border:1px solid #ccc; padding:10px; margin:5px;">
+                            <h3>${item.name_ar}</h3>
+                            <p>${item.scientific_name}</p>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                document.getElementById('output').innerText = "حدث خطأ: " + err.message;
             }
         }
+
+        loadData();
     </script>
 </body>
 </html>
