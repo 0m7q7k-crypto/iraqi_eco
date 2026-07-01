@@ -5,51 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عراقي إيكو - Iraqi Eco</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; }
+        .species-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; }
+        .error { color: red; font-weight: bold; }
+    </style>
 </head>
 <body>
 
-    <h1>مرحباً بك في عراقي إيكو</h1>
+    <h1>قائمة الكائنات الحية - عراقي إيكو</h1>
     <div id="species-list">جاري تحميل البيانات...</div>
 
     <script>
-        // إعدادات الاتصال بمشروعك الجديد
+        // إعدادات الاتصال بمشروعك
         const SUPABASE_URL = 'https://rmqtopxawrrgntcqqnpa.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcXRvcHhhd3JyZ250Y3FxbnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTIxMzQsImV4cCI6MjA5ODM2ODEzNH0.HoExHY9oNFdryWUC2u2UELLPfBNhH3P4L3zS03dvELA';
 
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // وظيفة لجلب البيانات من جدول species
         async function fetchSpecies() {
-            const { data, error } = await supabase
-                .from('species')
-                .select('*');
-
-            if (error) {
-                document.getElementById('species-list').innerText = 'خطأ في جلب البيانات: ' + error.message;
-                return;
-            }
-
             const listDiv = document.getElementById('species-list');
-            listDiv.innerHTML = ''; // تفريغ التحميل
+            
+            try {
+                const { data, error } = await supabase
+                    .from('species')
+                    .select('*');
 
-            if (data.length === 0) {
-                listDiv.innerText = 'لا توجد بيانات حالياً.';
-                return;
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    listDiv.innerHTML = '<p>لا توجد بيانات حالياً في قاعدة البيانات.</p>';
+                    return;
+                }
+
+                listDiv.innerHTML = ''; // تنظيف القائمة
+                data.forEach(item => {
+                    listDiv.innerHTML += `
+                        <div class="species-card">
+                            <h2>${item.name_ar || 'بدون اسم'}</h2>
+                            <p><strong>الاسم العلمي:</strong> ${item.scientific_name || 'غير متوفر'}</p>
+                            <p><strong>حالة الحفظ:</strong> ${item.conservation_status || 'غير معروف'}</p>
+                            <p><strong>الوصف:</strong> ${item.description || 'لا يوجد وصف'}</p>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                console.error("خطأ:", err);
+                listDiv.innerHTML = `<p class="error">حدث خطأ أثناء جلب البيانات: ${err.message}</p>`;
             }
-
-            data.forEach(item => {
-                listDiv.innerHTML += `
-                    <div>
-                        <h2>${item.name_ar}</h2>
-                        <p>الاسم العلمي: ${item.scientific_name}</p>
-                        <p>حالة الحفظ: ${item.conservation_status}</p>
-                    </div>
-                    <hr>
-                `;
-            });
         }
 
-        // تشغيل الوظيفة عند فتح الصفحة
+        // تشغيل الوظيفة عند تحميل الصفحة
         fetchSpecies();
     </script>
 </body>
