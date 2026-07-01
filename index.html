@@ -1,13 +1,39 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>تجربة</title>
+    <title>عراقي إيكو</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <h1 id="test">إذا ظهرت هذه الرسالة، فالموقع يعمل!</h1>
+    <h1 id="status">جاري التحميل...</h1>
+    
     <script>
-        document.getElementById('test').innerText = "نجح تشغيل الكود في المتصفح!";
+        // 2. استخدام "نافذة التحميل" لضمان جاهزية المكتبة
+        window.addEventListener('load', function() {
+            const URL = 'https://rmqtopxawrrgntcqqnpa.supabase.co';
+            const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcXRvcHhhd3JyZ250Y3FxbnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTIxMzQsImV4cCI6MjA5ODM2ODEzNH0.HoExHY9oNFdryWUC2u2UELLPfBNhH3P4L3zS03dvELA';
+
+            try {
+                // التأكد من وجود supabase قبل استخدامه
+                if (typeof supabase === 'undefined') {
+                    throw new Error("لم يتم تحميل مكتبة Supabase");
+                }
+
+                const client = supabase.createClient(URL, KEY);
+                
+                client.from('species').select('*').limit(1)
+                    .then(res => {
+                        if (res.error) {
+                            document.getElementById('status').innerText = "خطأ من Supabase: " + res.error.message;
+                        } else {
+                            document.getElementById('status').innerText = "تم الاتصال بنجاح! عدد العناصر: " + res.data.length;
+                        }
+                    });
+            } catch (e) {
+                document.getElementById('status').innerText = "خطأ: " + e.message;
+            }
+        });
     </script>
 </body>
 </html>
