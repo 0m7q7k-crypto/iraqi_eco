@@ -2,36 +2,39 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>عراقي إيكو</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عراقي إيكو - Iraqi Eco</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 10px; background: #fff; }
+        h2 { color: #2e7d32; }
+    </style>
 </head>
 <body>
-    <h1 id="status">جاري التحميل...</h1>
-    
+    <h1>قائمة الكائنات الحية</h1>
+    <div id="list">جاري تحميل البيانات...</div>
+
     <script>
-        // 2. استخدام "نافذة التحميل" لضمان جاهزية المكتبة
-        window.addEventListener('load', function() {
+        window.addEventListener('load', async () => {
             const URL = 'https://rmqtopxawrrgntcqqnpa.supabase.co';
             const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcXRvcHhhd3JyZ250Y3FxbnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTIxMzQsImV4cCI6MjA5ODM2ODEzNH0.HoExHY9oNFdryWUC2u2UELLPfBNhH3P4L3zS03dvELA';
-
-            try {
-                // التأكد من وجود supabase قبل استخدامه
-                if (typeof supabase === 'undefined') {
-                    throw new Error("لم يتم تحميل مكتبة Supabase");
-                }
-
-                const client = supabase.createClient(URL, KEY);
-                
-                client.from('species').select('*').limit(1)
-                    .then(res => {
-                        if (res.error) {
-                            document.getElementById('status').innerText = "خطأ من Supabase: " + res.error.message;
-                        } else {
-                            document.getElementById('status').innerText = "تم الاتصال بنجاح! عدد العناصر: " + res.data.length;
-                        }
-                    });
-            } catch (e) {
-                document.getElementById('status').innerText = "خطأ: " + e.message;
+            
+            const supabase = window.supabase.createClient(URL, KEY);
+            const { data, error } = await supabase.from('species').select('*');
+            
+            const listDiv = document.getElementById('list');
+            if (error) {
+                listDiv.innerText = "خطأ: " + error.message;
+            } else {
+                listDiv.innerHTML = data.map(item => `
+                    <div class="card">
+                        <h2>${item.name_ar || 'بدون اسم'}</h2>
+                        <p><strong>الاسم العلمي:</strong> ${item.scientific_name || 'غير متوفر'}</p>
+                        <p><strong>حالة الحفظ:</strong> ${item.conservation_status || 'غير معروف'}</p>
+                        <p>${item.description || ''}</p>
+                    </div>
+                `).join('');
             }
         });
     </script>
