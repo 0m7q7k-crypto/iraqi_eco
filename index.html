@@ -2,82 +2,55 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>IraqiEco - النتائج</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عراقي إيكو - Iraqi Eco</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
-        .item { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; }
-        .admin-section { margin-top: 50px; padding: 20px; border-top: 2px dashed #ccc; display: none; }
-    </style>
 </head>
 <body>
 
-<h1>النتائج المسجلة</h1>
-<div id="results">جاري جلب البيانات...</div>
+    <h1>مرحباً بك في عراقي إيكو</h1>
+    <div id="species-list">جاري تحميل البيانات...</div>
 
-<div id="admin-area" class="admin-section">
-    <h3>لوحة التحكم</h3>
-    <input type="text" id="arName" placeholder="الاسم العربي"><br>
-    <input type="text" id="laName" placeholder="الاسم اللاتيني"><br>
-    <input type="text" id="imgUrl" placeholder="رابط الصورة"><br>
-    <button onclick="addItem()">إضافة للسجل</button>
-    <button onclick="logout()">خروج</button>
-</div>
+    <script>
+        // إعدادات الاتصال بمشروعك الجديد
+        const SUPABASE_URL = 'https://rmqtopxawrrgntcqqnpa.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcXRvcHhhd3JyZ250Y3FxbnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTIxMzQsImV4cCI6MjA5ODM2ODEzNH0.HoExHY9oNFdryWUC2u2UELLPfBNhH3P4L3zS03dvELA';
 
-<button onclick="showLogin()">.</button>
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-<script>
-    // ضع بياناتك هنا بدقة
-    const supabase = supabase.createClient(
-        'https://rmqtopxawrrgntcqqnpa.supabase.co', 
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcXRvcHhhd3JyZ250Y3FxbnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTIxMzQsImV4cCI6MjA5ODM2ODEzNH0.HoExHY9oNFdryWUC2u2UELLPfBNhH3P4L3zS03dvELA' 
-    );
+        // وظيفة لجلب البيانات من جدول species
+        async function fetchSpecies() {
+            const { data, error } = await supabase
+                .from('species')
+                .select('*');
 
-    async function loadData() {
-        const container = document.getElementById('results');
-        const { data, error } = await supabase.from('species').select('*');
-        
-        if (error) {
-            container.innerHTML = "خطأ في الاتصال: " + error.message;
-            return;
+            if (error) {
+                document.getElementById('species-list').innerText = 'خطأ في جلب البيانات: ' + error.message;
+                return;
+            }
+
+            const listDiv = document.getElementById('species-list');
+            listDiv.innerHTML = ''; // تفريغ التحميل
+
+            if (data.length === 0) {
+                listDiv.innerText = 'لا توجد بيانات حالياً.';
+                return;
+            }
+
+            data.forEach(item => {
+                listDiv.innerHTML += `
+                    <div>
+                        <h2>${item.name_ar}</h2>
+                        <p>الاسم العلمي: ${item.scientific_name}</p>
+                        <p>حالة الحفظ: ${item.conservation_status}</p>
+                    </div>
+                    <hr>
+                `;
+            });
         }
-        
-        if (data && data.length > 0) {
-            container.innerHTML = data.map(i => `
-                <div class="item">
-                    <h3>${i.arabic_name || 'بدون اسم'}</h3>
-                    <p>${i.latin_name || 'بدون اسم'}</p>
-                    <img src="${i.image_url || ''}" width="100">
-                </div>
-            `).join('');
-        } else {
-            container.innerHTML = "لا توجد بيانات.";
-        }
-    }
 
-    supabase.auth.onAuthStateChange((event, session) => {
-        if (session) document.getElementById('admin-area').style.display = 'block';
-    });
-
-    function showLogin() {
-        const email = prompt("البريد:");
-        const pass = prompt("كلمة المرور:");
-        supabase.auth.signInWithPassword({ email, password: pass });
-    }
-
-    async function addItem() {
-        const { error } = await supabase.from('species').insert([{
-            arabic_name: document.getElementById('arName').value,
-            latin_name: document.getElementById('laName').value,
-            image_url: document.getElementById('imgUrl').value
-        }]);
-        if (error) alert("خطأ: " + error.message);
-        else location.reload();
-    }
-
-    function logout() { supabase.auth.signOut(); location.reload(); }
-
-    loadData();
-</script>
+        // تشغيل الوظيفة عند فتح الصفحة
+        fetchSpecies();
+    </script>
 </body>
 </html>
