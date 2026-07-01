@@ -2,40 +2,33 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عراقي إيكو - تشخيص</title>
+    <title>فحص الاتصال</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <h1>حالة الاتصال</h1>
-    <div id="status">جاري الفحص...</div>
-
+    <h1 id="status">جاري الفحص...</h1>
+    
     <script>
-        const SUPABASE_URL = 'https://rmqtopxawrrgntcqqnpa.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcXRvcHhhd3JyZ250Y3FxbnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTIxMzQsImV4cCI6MjA5ODM2ODEzNH0.HoExHY9oNFdryWUC2u2UELLPfBNhH3P4L3zS03dvELA';
+        const URL = 'https://rmqtopxawrrgntcqqnpa.supabase.co';
+        const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcXRvcHhhd3JyZ250Y3FxbnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTIxMzQsImV4cCI6MjA5ODM2ODEzNH0.HoExHY9oNFdryWUC2u2UELLPfBNhH3P4L3zS03dvELA';
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        async function checkConnection() {
-            const statusDiv = document.getElementById('status');
-            try {
-                // محاولة جلب أي صف واحد فقط
-                const { data, error } = await supabase.from('species').select('*').limit(1);
-                
-                if (error) {
-                    statusDiv.innerHTML = `<b style="color:red">خطأ في الاتصال:</b> ${error.message} <br> <b>التفاصيل:</b> ${error.details || 'لا توجد تفاصيل'}`;
-                } else {
-                    statusDiv.innerHTML = `<b style="color:green">الاتصال ناجح!</b> <br> عدد العناصر الموجودة: ${data.length}`;
-                    if(data.length > 0) {
-                        statusDiv.innerHTML += `<br> اسم أول حيوان: ${data[0].name_ar || 'بدون اسم'}`;
+        try {
+            const supabase = supabase.createClient(URL, KEY);
+            document.getElementById('status').innerText = "تم تحميل مكتبة Supabase بنجاح!";
+            
+            // محاولة جلب بيانات
+            supabase.from('species').select('*').limit(1)
+                .then(res => {
+                    if (res.error) {
+                        document.getElementById('status').innerText = "خطأ: " + res.error.message;
+                    } else {
+                        document.getElementById('status').innerText = "الاتصال ناجح! عدد العناصر: " + res.data.length;
                     }
-                }
-            } catch (err) {
-                statusDiv.innerHTML = "خطأ غير متوقع: " + err.message;
-            }
+                });
+        } catch (e) {
+            document.getElementById('status').innerText = "خطأ في تحميل المكتبة: " + e.message;
         }
-
-        checkConnection();
     </script>
 </body>
 </html>
+
