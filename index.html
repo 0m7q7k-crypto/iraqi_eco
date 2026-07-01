@@ -2,42 +2,37 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>فحص نهائي - عراقي إيكو</title>
+    <title>كاشف الأعطال</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <h1>حالة الاتصال:</h1>
-    <div id="status">جاري المحاولة...</div>
+    <h1>نتائج الفحص:</h1>
+    <div id="debug" style="background:#eee; padding:10px; border:1px solid #999;"></div>
 
     <script>
-        const statusDiv = document.getElementById('status');
-        
-        // 1. تعريف العميل
-        const supabase = window.supabase.createClient(
-            'https://rmqtopxawrrgntcqqnpa.supabase.co', 
-            'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX'
-        );
+        const debug = document.getElementById('debug');
+        debug.innerText = "بدء الاتصال...";
 
-        // 2. محاولة جلب البيانات مع مراقبة الأخطاء
-        async function testConnection() {
-            try {
-                console.log("بدء طلب البيانات...");
-                const { data, error } = await supabase.from('species').select('*').range(0, 5);
-                
-                if (error) {
-                    statusDiv.innerHTML = "<b style='color:red;'>خطأ في القاعدة:</b> " + error.message;
-                    console.error("Supabase Error Details:", error);
+        try {
+            const supabase = window.supabase.createClient(
+                'https://rmqtopxawrrgntcqqnpa.supabase.co', 
+                'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX'
+            );
+
+            debug.innerText += "\nتم إنشاء العميل. جاري الطلب...";
+
+            supabase.from('species').select('*').then(res => {
+                if (res.error) {
+                    debug.innerText = "خطأ في القاعدة: " + res.error.message;
                 } else {
-                    statusDiv.innerHTML = "<b style='color:green;'>نجاح!</b> عدد البيانات التي وصلت: " + data.length;
-                    console.log("Data:", data);
+                    debug.innerText = "نجاح! وصلت " + res.data.length + " قطعة بيانات.";
                 }
-            } catch (err) {
-                statusDiv.innerHTML = "<b style='color:red;'>خطأ في المتصفح/الشبكة:</b> " + err.message;
-                console.error("Catch Error:", err);
-            }
+            }).catch(err => {
+                debug.innerText = "خطأ في الشبكة: " + err.message;
+            });
+        } catch (e) {
+            debug.innerText = "خطأ في الكود: " + e.message;
         }
-
-        testConnection();
     </script>
 </body>
 </html>
