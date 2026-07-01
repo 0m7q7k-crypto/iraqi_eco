@@ -6,18 +6,12 @@
     <title>عراقي إيكو - Iraqi Eco</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f6; padding: 20px; line-height: 1.6; color: #333; }
-        h1 { text-align: center; color: #2e7d32; }
-        .card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-right: 5px solid #2e7d32; }
-        
-        /* تصميم لوحة التحكم */
-        #admin-panel { max-width: 500px; margin: 40px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #2e7d32; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        button:hover { background-color: #1b5e20; }
-        
-        /* إخفاء لوحة الإدارة */
-        #admin-panel { display: none; }
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; background: #f9f9f9; }
+        .card { background: white; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 10px; border-right: 5px solid #2e7d32; }
+        .admin-section { margin-top: 50px; padding: 20px; border-top: 2px solid #ccc; text-align: center; }
+        #admin-panel { display: none; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input { display: block; width: 100%; max-width: 300px; margin: 10px auto; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; background: #2e7d32; color: white; border: none; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -25,22 +19,21 @@
     <h1>قائمة الكائنات الحية</h1>
     <div id="list">جاري تحميل البيانات...</div>
 
-    <div style="text-align: center; margin-top: 50px;">
-        <button onclick="document.getElementById('admin-panel').style.display='block'" style="background:none; color:#777; border:none; text-decoration:underline;">تسجيل دخول الإدارة</button>
-    </div>
-
-    <div id="admin-panel">
-        <div id="login-area">
-            <h3>تسجيل دخول المشرف</h3>
-            <input type="email" id="email" placeholder="البريد الإلكتروني">
-            <input type="password" id="password" placeholder="كلمة السر">
-            <button onclick="login()">دخول</button>
-        </div>
-        <div id="publish-area" style="display:none;">
-            <h3>إضافة كائن جديد</h3>
-            <input type="text" id="name" placeholder="اسم الكائن">
-            <button onclick="publish()">نشر الكائن</button>
-            <button onclick="logout()">خروج</button>
+    <div class="admin-section">
+        <button id="toggle-admin" onclick="showAdmin()">تسجيل دخول الإدارة</button>
+        
+        <div id="admin-panel">
+            <div id="login-area">
+                <input type="email" id="email" placeholder="البريد الإلكتروني">
+                <input type="password" id="password" placeholder="كلمة السر">
+                <button onclick="login()">دخول</button>
+            </div>
+            <div id="publish-area" style="display:none;">
+                <h3>إضافة كائن جديد</h3>
+                <input type="text" id="name" placeholder="اسم الكائن">
+                <button onclick="publish()">نشر</button>
+                <button onclick="logout()">خروج</button>
+            </div>
         </div>
     </div>
 
@@ -51,36 +44,52 @@
         );
 
         async function loadData() {
-            const { data } = await supabase.from('species').select('*');
-            document.getElementById('list').innerHTML = data.map(i => `
-                <div class="card">
-                    <h2>${i.name_ar}</h2>
-                </div>
-            `).join('');
+            const { data, error } = await supabase.from('species').select('*');
+            if (error) {
+                document.getElementById('list').innerText = "خطأ في الاتصال بقاعدة البيانات.";
+            } else {
+                document.getElementById('list').innerHTML = data.map(i => `
+                    <div class="card">
+                        <h2>${i.name_ar || 'كائن بدون اسم'}</h2>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function showAdmin() {
+            document.getElementById('admin-panel').style.display = 'block';
+            document.getElementById('toggle-admin').style.display = 'none';
         }
 
         async function login() {
-            const { error } = await supabase.auth.signInWithPassword({
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value
-            });
-            if (error) alert("خطأ: " + error.message);
-            else location.reload();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+                alert("خطأ: " + error.message);
+            } else {
+                alert("تم الدخول بنجاح!");
+                location.reload();
+            }
         }
 
         async function publish() {
-            const { error } = await supabase.from('species').insert([{ name_ar: document.getElementById('name').value }]);
+            const name = document.getElementById('name').value;
+            const { error } = await supabase.from('species').insert([{ name_ar: name }]);
             if (error) alert("خطأ: " + error.message);
             else { alert("تم النشر!"); location.reload(); }
         }
 
-        async function logout() { await supabase.auth.signOut(); location.reload(); }
+        async function logout() {
+            await supabase.auth.signOut();
+            location.reload();
+        }
 
         window.addEventListener('load', async () => {
             loadData();
             const { data } = await supabase.auth.getSession();
             if (data.session) {
-                document.getElementById('admin-panel').style.display = 'block';
+                showAdmin();
                 document.getElementById('login-area').style.display = 'none';
                 document.getElementById('publish-area').style.display = 'block';
             }
