@@ -16,6 +16,7 @@
         .menu-btn { position: absolute; top: 5px; left: 5px; cursor: pointer; font-size: 1.2em; }
         .menu-options { display: none; position: absolute; top: 25px; left: 5px; background: white; border: 1px solid #ccc; z-index: 100; padding: 5px; }
         .menu-options div { padding: 5px; cursor: pointer; font-size: 0.8em; }
+        .status-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; color: white; font-size: 0.7em; margin-top: 5px; font-weight: bold; }
         input, select { display: block; width: 90%; margin: 8px 0; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
         #modal { display: none; position: fixed; top: 5%; right: 10%; width: 80%; background: white; padding: 20px; border: 3px solid #1b5e20; z-index: 1000; border-radius: 10px; max-height: 90vh; overflow-y: auto; }
     </style>
@@ -43,9 +44,12 @@
     <input id="phylum" placeholder="الشعبة">
     <input id="family" placeholder="العائلة">
     <select id="conservation_status">
-        <option value="LC">غير مهدد (LC)</option>
-        <option value="EN">مهدد (EN)</option>
-        <option value="CR">خطر أقصى (CR)</option>
+        <option value="EX" style="background:#000; color:#fff;">منقرض (EX)</option>
+        <option value="CR" style="background:#d32f2f; color:#fff;">خطر أقصى (CR)</option>
+        <option value="EN" style="background:#f44336; color:#fff;">مهدد (EN)</option>
+        <option value="VU" style="background:#ff9800; color:#000;">معرض للخطر (VU)</option>
+        <option value="NT" style="background:#ffc107; color:#000;">قريب من التهديد (NT)</option>
+        <option value="LC" style="background:#4caf50; color:#fff;">غير مهدد (LC)</option>
     </select>
     <input id="img" placeholder="رابط الصورة">
     <input id="desc" placeholder="الوصف">
@@ -55,6 +59,8 @@
 <script>
     const client = supabase.createClient('https://rmqtopxawrrgntcqqnpa.supabase.co', 'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX');
     let species = [];
+
+    const statusColors = { 'EX': '#000', 'CR': '#d32f2f', 'EN': '#f44336', 'VU': '#ff9800', 'NT': '#ffc107', 'LC': '#4caf50' };
 
     async function init() {
         const { data } = await client.from('species').select('*');
@@ -79,7 +85,7 @@
                             </div>
                             <h3>${item.name_ar}</h3>
                             <p><i>${item.scientific_name}</i></p>
-                            <small>العائلة: ${item.family || 'غير محدد'}</small>
+                            <div class="status-badge" style="background:${statusColors[item.conservation_status] || '#757575'}">${item.conservation_status || 'غير محدد'}</div>
                         </div>
                     `).join('')}
                 </div>
@@ -102,6 +108,7 @@
         document.getElementById('kingdom').value = item ? item.kingdom : '';
         document.getElementById('phylum').value = item ? item.phylum : '';
         document.getElementById('family').value = item ? item.family : '';
+        document.getElementById('conservation_status').value = item ? item.conservation_status : 'LC';
         document.getElementById('img').value = item ? item.image_url : '';
         document.getElementById('desc').value = item ? item.description : '';
         
@@ -130,7 +137,7 @@
     }
 
     async function deleteItem(id) {
-        if(confirm('هل أنت متأكد؟')) {
+        if(confirm('هل أنت متأكد من الحذف؟')) {
             await client.from('species').delete().eq('id', id);
             location.reload();
         }
