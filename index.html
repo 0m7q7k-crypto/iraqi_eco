@@ -4,44 +4,39 @@
     <meta charset="UTF-8">
     <title>عراقي إيكو</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; zoom: 1.5; } /* تكبير الموقع 50% */
+        body { font-family: sans-serif; background: #f4f4f4; margin: 0; zoom: 1.5; }
         header { background: #1b5e20; color: white; padding: 20px; text-align: center; }
         .container { padding: 20px; }
-        .desc-text { font-size: 0.9em; opacity: 0.9; margin-top: 5px; }
         
-        .kingdom-section { margin-bottom: 40px; }
-        .kingdom-title { background: #1b5e20; color: white; padding: 5px 15px; border-radius: 5px; margin-bottom: 15px; display: inline-block; font-weight: bold; }
-        .cards-wrapper { display: flex; flex-wrap: wrap; gap: 15px; }
+        .kingdom-section { margin-bottom: 30px; }
+        .kingdom-title { background: #1b5e20; color: white; padding: 5px 15px; border-radius: 5px; margin-bottom: 10px; display: inline-block; }
+        .cards-wrapper { display: flex; flex-wrap: wrap; gap: 10px; }
         
-        .card { border: 1px solid #ddd; padding: 15px; border-radius: 10px; background: white; width: 200px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .menu-btn { position: absolute; top: 5px; left: 5px; cursor: pointer; font-weight: bold; }
-        .menu-options { display: none; position: absolute; top: 25px; left: 5px; background: white; border: 1px solid #ccc; z-index: 10; }
-        .menu-options div { padding: 5px; cursor: pointer; font-size: 0.8em; }
-        
-        .status-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; color: white; font-size: 0.7em; margin-top: 10px; }
+        .card { border: 1px solid #ddd; padding: 10px; border-radius: 8px; background: white; width: 180px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         input, select { display: block; width: 90%; margin: 5px 0; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        #modal { display: none; position: fixed; top: 10%; right: 10%; width: 80%; background: white; padding: 20px; border: 3px solid #1b5e20; z-index: 100; border-radius: 10px; }
+        #modal { display: none; position: fixed; top: 5%; right: 5%; width: 90%; background: white; padding: 15px; border: 2px solid #1b5e20; z-index: 100; border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>عراقي إيكو</h1>
-    <p class="desc-text">قاعدة بيانات الكائنات الحية في العراق</p>
+    <p>قاعدة بيانات الكائنات الحية في العراق</p>
 </header>
 
 <div class="container">
-    <input type="text" id="search" style="width:100%; padding:8px; margin-bottom:20px;" placeholder="بحث..." onkeyup="render()">
-    <button onclick="document.getElementById('modal').style.display='block'" style="padding: 5px 15px; background: #1b5e20; color: white; border: none; border-radius: 5px;">+ إضافة</button>
-    <div id="content" style="margin-top:20px;"></div>
+    <input type="text" id="search" placeholder="بحث..." onkeyup="render()" style="width:100%; padding:8px;">
+    <button onclick="document.getElementById('modal').style.display='block'" style="margin:10px 0; padding:8px; background:#1b5e20; color:white; border:none;">+ إضافة مخلوق</button>
+    <div id="content"></div>
 </div>
 
 <div id="modal">
-    <h3>إضافة/تعديل</h3>
+    <h3>إضافة مخلوق</h3>
     <input id="n_ar" placeholder="الاسم العربي">
     <input id="n_sci" placeholder="الاسم العلمي">
+    <input id="kingdom" placeholder="المملكة">
+    <input id="family" placeholder="العائلة">
     <button onclick="addItem()" style="background:#1b5e20; color:white; padding:10px; width:100%;">حفظ</button>
 </div>
 
@@ -56,38 +51,23 @@
     }
 
     function render() {
-        document.getElementById('content').innerHTML = species.map(item => `
-            <div class="card" id="card-${item.id}">
-                <div class="menu-btn" onclick="this.nextElementSibling.style.display='block'">⋮</div>
-                <div class="menu-options" onmouseleave="this.style.display='none'">
-                    <div onclick="deleteItem(${item.id})">حذف</div>
-                    <div onclick="alert('ميزة التعديل قيد التطوير')">تعديل</div>
-                    <div onclick="downloadCard('card-${item.id}')">تنزيل</div>
-                </div>
-                <h3>${item.name_ar}</h3>
-                <p><i>${item.scientific_name}</i></p>
+        const q = document.getElementById('search').value.toLowerCase();
+        const filtered = species.filter(i => (i.name_ar||'').includes(q));
+        document.getElementById('content').innerHTML = filtered.map(item => `
+            <div class="card">
+                <h4>${item.name_ar}</h4>
+                <p style="font-size:0.8em"><i>${item.scientific_name}</i></p>
+                <p style="font-size:0.7em">المملكة: ${item.kingdom || 'غير محدد'}</p>
             </div>
         `).join('');
-    }
-
-    async function deleteItem(id) {
-        await client.from('species').delete().eq('id', id);
-        location.reload();
-    }
-
-    function downloadCard(id) {
-        html2canvas(document.getElementById(id)).then(canvas => {
-            const link = document.createElement('a');
-            link.download = 'creature.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        });
     }
 
     async function addItem() {
         const data = {
             name_ar: document.getElementById('n_ar').value,
-            scientific_name: document.getElementById('n_sci').value
+            scientific_name: document.getElementById('n_sci').value,
+            kingdom: document.getElementById('kingdom').value,
+            family: document.getElementById('family').value
         };
         await client.from('species').insert([data]);
         location.reload();
@@ -96,3 +76,4 @@
 </script>
 </body>
 </html>
+
