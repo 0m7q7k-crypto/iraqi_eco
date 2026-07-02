@@ -9,12 +9,11 @@
         body { font-family: sans-serif; background: #f4f4f4; margin: 0; zoom: 1.5; }
         header { background: #1b5e20; color: white; padding: 20px; text-align: center; }
         .container { padding: 20px; }
-        .desc-text { font-size: 0.9em; opacity: 0.9; margin-top: 5px; }
-        .kingdom-section { margin-bottom: 40px; }
+        .kingdom-section { margin-bottom: 30px; }
         .kingdom-title { background: #1b5e20; color: white; padding: 5px 15px; border-radius: 5px; margin-bottom: 15px; display: inline-block; font-weight: bold; }
         .cards-wrapper { display: flex; flex-wrap: wrap; gap: 15px; }
         .card { border: 1px solid #ddd; padding: 15px; border-radius: 10px; background: white; width: 220px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .menu-btn { position: absolute; top: 5px; left: 5px; cursor: pointer; font-size: 1.2em; font-weight: bold; }
+        .menu-btn { position: absolute; top: 5px; left: 5px; cursor: pointer; font-size: 1.2em; }
         .menu-options { display: none; position: absolute; top: 25px; left: 5px; background: white; border: 1px solid #ccc; z-index: 100; padding: 5px; }
         .menu-options div { padding: 5px; cursor: pointer; font-size: 0.8em; }
         input, select { display: block; width: 90%; margin: 8px 0; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
@@ -25,18 +24,19 @@
 
 <header>
     <h1>عراقي إيكو</h1>
-    <p class="desc-text">قاعدة بيانات الكائنات الحية في العراق</p>
+    <p>قاعدة بيانات الكائنات الحية في العراق</p>
 </header>
 
 <div class="container">
     <input type="text" id="search" placeholder="بحث بالاسم..." onkeyup="render()" style="width:100%; padding:10px;">
-    <button onclick="document.getElementById('modal').style.display='block'" style="margin:15px 0; padding:10px; background:#1b5e20; color:white; border:none; border-radius:5px;">+ إضافة مخلوق</button>
+    <button onclick="openModal()" style="margin:15px 0; padding:10px; background:#1b5e20; color:white; border:none; border-radius:5px;">+ إضافة مخلوق</button>
     <div id="content"></div>
 </div>
 
 <div id="modal">
     <button onclick="document.getElementById('modal').style.display='none'" style="float:left;">✖</button>
-    <h3>إضافة/تعديل مخلوق</h3>
+    <h3 id="modalTitle">إضافة مخلوق</h3>
+    <input type="hidden" id="editId">
     <input id="n_ar" placeholder="الاسم العربي">
     <input id="n_sci" placeholder="الاسم العلمي">
     <input id="kingdom" placeholder="المملكة">
@@ -49,7 +49,7 @@
     </select>
     <input id="img" placeholder="رابط الصورة">
     <input id="desc" placeholder="الوصف">
-    <button onclick="addItem()" style="background:#1b5e20; color:white; padding:10px; width:100%;">حفظ البيانات</button>
+    <button onclick="saveItem()" style="background:#1b5e20; color:white; padding:10px; width:100%;">حفظ البيانات</button>
 </div>
 
 <script>
@@ -74,7 +74,7 @@
                             <div class="menu-btn" onclick="toggleMenu(${item.id})">⋮</div>
                             <div class="menu-options" id="menu-${item.id}">
                                 <div onclick="deleteItem(${item.id})">🗑 حذف</div>
-                                <div onclick="alert('ميزة التعديل تتطلب اتصالاً كاملاً بالجدول')">✏ تعديل</div>
+                                <div onclick="openModal(${item.id})">✏ تعديل</div>
                                 <div onclick="downloadCard('card-${item.id}')">⬇ تنزيل</div>
                             </div>
                             <h3>${item.name_ar}</h3>
@@ -88,11 +88,28 @@
     }
 
     function toggleMenu(id) {
-        const menu = document.getElementById('menu-'+id);
-        menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        document.getElementById('menu-'+id).style.display = (document.getElementById('menu-'+id).style.display === 'block') ? 'none' : 'block';
     }
 
-    async function addItem() {
+    function openModal(id = null) {
+        const modal = document.getElementById('modal');
+        const item = species.find(i => i.id === id);
+        document.getElementById('editId').value = id || '';
+        document.getElementById('modalTitle').innerText = id ? "تعديل مخلوق" : "إضافة مخلوق";
+        
+        document.getElementById('n_ar').value = item ? item.name_ar : '';
+        document.getElementById('n_sci').value = item ? item.scientific_name : '';
+        document.getElementById('kingdom').value = item ? item.kingdom : '';
+        document.getElementById('phylum').value = item ? item.phylum : '';
+        document.getElementById('family').value = item ? item.family : '';
+        document.getElementById('img').value = item ? item.image_url : '';
+        document.getElementById('desc').value = item ? item.description : '';
+        
+        modal.style.display = 'block';
+    }
+
+    async function saveItem() {
+        const id = document.getElementById('editId').value;
         const data = {
             name_ar: document.getElementById('n_ar').value,
             scientific_name: document.getElementById('n_sci').value,
@@ -103,7 +120,12 @@
             image_url: document.getElementById('img').value,
             description: document.getElementById('desc').value
         };
-        await client.from('species').insert([data]);
+
+        if (id) {
+            await client.from('species').update(data).eq('id', id);
+        } else {
+            await client.from('species').insert([data]);
+        }
         location.reload();
     }
 
