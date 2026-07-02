@@ -3,7 +3,8 @@
 <head>
     <meta name="google-site-verification" content="0jRTIrdsb7aj8SvFaH9WswrLn506cgoyudn40MhxDiE" />
     <meta charset="UTF-8">
-    <title>عراقي إيكو | مشروع تطوعي يهدف لدراسة وحماية النظام البيئي</title>
+    <title>عراقي إيكو | مشروع تطوعي لدراسة وحماية البيئة</title>
+    <meta name="description" content="عراقي إيكو: مشروع تطوعي يهدف لدراسة وحماية البيئة، مع تطلعات عالمية بإذن اللّٰه. استكشف قاعدة بياناتنا، و نرجو أن تنال اعجابك.">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -19,6 +20,7 @@
         .menu-options { display: none; position: absolute; top: 25px; left: 5px; background: white; border: 1px solid #ccc; z-index: 100; padding: 5px; }
         .menu-options div { padding: 5px; cursor: pointer; font-size: 0.8em; }
         .status-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; color: white; font-size: 0.7em; margin-top: 5px; font-weight: bold; }
+        .card-desc { font-size: 0.85em; color: #555; margin-top: 10px; display: block; }
         input, select { display: block; width: 90%; margin: 8px 0; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
         #modal { display: none; position: fixed; top: 5%; right: 10%; width: 80%; background: white; padding: 20px; border: 3px solid #1b5e20; z-index: 1000; border-radius: 10px; max-height: 90vh; overflow-y: auto; }
         .admin-footer { margin-top: 50px; text-align: center; opacity: 0.3; }
@@ -37,7 +39,7 @@
     <div id="content"></div>
 </div>
 
-<div id="modal" style="display:none; position:fixed; top:20%; right:20%; width:60%; background:white; padding:20px; border:2px solid #1b5e20; z-index:2000;">
+<div id="modal">
     <h3 id="modalTitle">إضافة/تعديل مخلوق</h3>
     <input type="hidden" id="editId">
     <input id="n_ar" placeholder="الاسم العربي" required>
@@ -76,7 +78,6 @@
         render();
     }
 
-    // دالة تسجيل الدخول
     async function loginPrompt() {
         const email = prompt("أدخل البريد الإلكتروني للمسؤول:");
         const password = prompt("أدخل كلمة المرور:");
@@ -106,6 +107,7 @@
                                 </div>
                                 <h3>${item.name_ar}</h3>
                                 <p><i>${item.scientific_name}</i></p>
+                                <span class="card-desc">${item.description || ''}</span>
                                 <div class="status-badge" style="background:${statusConfig[item.conservation_status]?.color || '#757575'}">${statusConfig[item.conservation_status]?.text || 'غير محدد'}</div>
                             </div>
                         `).join('')}
@@ -121,25 +123,29 @@
     }
 
     function openModal(id = null) {
-        // التحقق من تسجيل الدخول قبل الفتح
-        const user = client.auth.getUser();
-        if (!user) { alert("يجب تسجيل الدخول كمسؤول للقيام بهذه العملية."); return; }
-        
         const modal = document.getElementById('modal');
         const item = species.find(i => i.id === id);
         document.getElementById('editId').value = id || '';
         document.getElementById('n_ar').value = item ? item.name_ar : '';
         document.getElementById('n_sci').value = item ? item.scientific_name : '';
+        document.getElementById('desc').value = item ? item.description : '';
         modal.style.display = 'block';
     }
 
     async function saveItem() {
         const n_ar = document.getElementById('n_ar').value;
         const n_sci = document.getElementById('n_sci').value;
+        const desc = document.getElementById('desc').value;
         if (!n_ar || !n_sci) return alert("البيانات ناقصة!");
         
         const id = document.getElementById('editId').value;
-        const data = { name_ar: n_ar, scientific_name: n_sci, kingdom: document.getElementById('kingdom').value, conservation_status: document.getElementById('conservation_status').value };
+        const data = { 
+            name_ar: n_ar, 
+            scientific_name: n_sci, 
+            description: desc,
+            kingdom: document.getElementById('kingdom').value, 
+            conservation_status: document.getElementById('conservation_status').value 
+        };
         
         if (id) await client.from('species').update(data).eq('id', id);
         else await client.from('species').insert([data]);
