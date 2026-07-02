@@ -29,7 +29,7 @@
 </header>
 
 <div class="container">
-    <input type="text" id="search" placeholder="ابحث بالاسم العربي أو اللاتيني..." onkeyup="render()" style="width:100%; padding:10px;">
+    <input type="text" id="search" placeholder="بحث بالاسم العربي أو العلمي..." onkeyup="render()" style="width:100%; padding:10px;">
     <button onclick="openModal()" style="margin:15px 0; padding:10px; background:#1b5e20; color:white; border:none; border-radius:5px;">+ إضافة مخلوق</button>
     <div id="content"></div>
 </div>
@@ -38,8 +38,8 @@
     <button onclick="document.getElementById('modal').style.display='none'" style="float:left;">✖</button>
     <h3 id="modalTitle">إضافة مخلوق</h3>
     <input type="hidden" id="editId">
-    <input id="n_ar" placeholder="الاسم العربي">
-    <input id="n_sci" placeholder="الاسم العلمي">
+    <input id="n_ar" placeholder="الاسم العربي (إجباري)" required>
+    <input id="n_sci" placeholder="الاسم العلمي (إجباري)" required>
     
     <select id="kingdom">
         <option value="حيوانات">حيوانات</option>
@@ -49,8 +49,8 @@
         <option value="بدائيات">بدائيات</option>
     </select>
 
-    <input id="phylum" placeholder="الشعبة">
-    <input id="family" placeholder="العائلة">
+    <input id="phylum" placeholder="الشعبة (اختياري)">
+    <input id="family" placeholder="العائلة (اختياري)">
     <select id="conservation_status">
         <option value="EX">منقرض (EX)</option>
         <option value="CR">خطر أقصى (CR)</option>
@@ -59,8 +59,8 @@
         <option value="NT">قريب من التهديد (NT)</option>
         <option value="LC">غير مهدد (LC)</option>
     </select>
-    <input id="img" placeholder="رابط الصورة">
-    <input id="desc" placeholder="الوصف">
+    <input id="img" placeholder="رابط الصورة (اختياري)">
+    <input id="desc" placeholder="الوصف (اختياري)">
     <button onclick="saveItem()" style="background:#1b5e20; color:white; padding:10px; width:100%;">حفظ البيانات</button>
 </div>
 
@@ -68,7 +68,6 @@
     const client = supabase.createClient('https://rmqtopxawrrgntcqqnpa.supabase.co', 'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX');
     let species = [];
     
-    // تعريف الألوان والأسماء العربية
     const statusConfig = { 
         'EX': { color: '#000', text: 'منقرض' }, 
         'CR': { color: '#d32f2f', text: 'خطر أقصى' }, 
@@ -144,10 +143,19 @@
     }
 
     async function saveItem() {
+        const n_ar = document.getElementById('n_ar').value;
+        const n_sci = document.getElementById('n_sci').value;
+
+        // التحقق من الحقول الإجبارية
+        if (!n_ar || !n_sci) {
+            alert("الرجاء تعبئة الاسم العربي والاسم العلمي!");
+            return;
+        }
+
         const id = document.getElementById('editId').value;
         const data = {
-            name_ar: document.getElementById('n_ar').value,
-            scientific_name: document.getElementById('n_sci').value,
+            name_ar: n_ar,
+            scientific_name: n_sci,
             kingdom: document.getElementById('kingdom').value,
             phylum: document.getElementById('phylum').value,
             family: document.getElementById('family').value,
