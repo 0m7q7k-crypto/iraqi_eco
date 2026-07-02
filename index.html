@@ -52,12 +52,12 @@
     <input id="phylum" placeholder="الشعبة">
     <input id="family" placeholder="العائلة">
     <select id="conservation_status">
-        <option value="EX" style="background:#000; color:#fff;">منقرض (EX)</option>
-        <option value="CR" style="background:#d32f2f; color:#fff;">خطر أقصى (CR)</option>
-        <option value="EN" style="background:#f44336; color:#fff;">مهدد (EN)</option>
-        <option value="VU" style="background:#ff9800; color:#000;">معرض للخطر (VU)</option>
-        <option value="NT" style="background:#ffc107; color:#000;">قريب من التهديد (NT)</option>
-        <option value="LC" style="background:#4caf50; color:#fff;">غير مهدد (LC)</option>
+        <option value="EX">منقرض (EX)</option>
+        <option value="CR">خطر أقصى (CR)</option>
+        <option value="EN">مهدد (EN)</option>
+        <option value="VU">معرض للخطر (VU)</option>
+        <option value="NT">قريب من التهديد (NT)</option>
+        <option value="LC">غير مهدد (LC)</option>
     </select>
     <input id="img" placeholder="رابط الصورة">
     <input id="desc" placeholder="الوصف">
@@ -67,7 +67,16 @@
 <script>
     const client = supabase.createClient('https://rmqtopxawrrgntcqqnpa.supabase.co', 'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX');
     let species = [];
-    const statusColors = { 'EX': '#000', 'CR': '#d32f2f', 'EN': '#f44336', 'VU': '#ff9800', 'NT': '#ffc107', 'LC': '#4caf50' };
+    
+    // تعريف الألوان والأسماء العربية
+    const statusConfig = { 
+        'EX': { color: '#000', text: 'منقرض' }, 
+        'CR': { color: '#d32f2f', text: 'خطر أقصى' }, 
+        'EN': { color: '#f44336', text: 'مهدد' }, 
+        'VU': { color: '#ff9800', text: 'معرض للخطر' }, 
+        'NT': { color: '#ffc107', text: 'قريب من التهديد' }, 
+        'LC': { color: '#4caf50', text: 'غير مهدد' } 
+    };
 
     async function init() {
         const { data } = await client.from('species').select('*');
@@ -80,7 +89,6 @@
         const kingdoms = ["حيوانات", "نباتات", "فطريات", "طلائعيات", "بدائيات"];
         
         document.getElementById('content').innerHTML = kingdoms.map(k => {
-            // الفلترة تشمل الاسم العربي والاسم العلمي
             const items = species.filter(i => 
                 (i.kingdom || 'حيوانات') === k && 
                 ((i.name_ar || '').toLowerCase().includes(q) || (i.scientific_name || '').toLowerCase().includes(q))
@@ -101,7 +109,9 @@
                                 </div>
                                 <h3>${item.name_ar}</h3>
                                 <p><i>${item.scientific_name}</i></p>
-                                <div class="status-badge" style="background:${statusColors[item.conservation_status] || '#757575'}">${item.conservation_status || 'غير محدد'}</div>
+                                <div class="status-badge" style="background:${statusConfig[item.conservation_status]?.color || '#757575'}">
+                                    ${statusConfig[item.conservation_status]?.text || 'غير محدد'}
+                                </div>
                             </div>
                         `).join('')}
                     </div>
