@@ -10,7 +10,7 @@
         .container { padding: 20px; }
         .card { border: 2px solid #1b5e20; padding: 15px; margin: 10px; border-radius: 10px; background: white; width: 280px; display: inline-block; vertical-align: top; }
         .search-box { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #1b5e20; border-radius: 5px; }
-        #modal, #editModal { display: none; position: fixed; top: 10%; right: 10%; width: 80%; background: white; padding: 20px; border: 3px solid #1b5e20; z-index: 100; border-radius: 10px; }
+        #modal { display: none; position: fixed; top: 10%; right: 10%; width: 80%; background: white; padding: 20px; border: 3px solid #1b5e20; z-index: 100; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -21,13 +21,8 @@
 </header>
 
 <div class="container">
-    <div id="auth-panel">
-        <input id="email" placeholder="البريد">
-        <input id="password" type="password" placeholder="كلمة المرور">
-        <button onclick="login()">دخول</button>
-    </div>
-    <input type="text" id="search" class="search-box" placeholder="بحث..." onkeyup="render()">
-    <button id="add-btn" style="display:none;" onclick="document.getElementById('modal').style.display='block'">+ إضافة مخلوق</button>
+    <input type="text" id="search" class="search-box" placeholder="بحث بالاسم العربي أو اللاتيني..." onkeyup="render()">
+    <button onclick="checkAuth()">+ إضافة مخلوق</button>
     <div id="content"></div>
 </div>
 
@@ -36,32 +31,35 @@
     <h3>إضافة مخلوق</h3>
     <input id="n_ar" placeholder="الاسم العربي (مطلوب)"><br>
     <input id="n_sci" placeholder="الاسم اللاتيني (مطلوب)"><br>
-    <button onclick="addItem()">حفظ</button>
+    <button onclick="addItem()">حفظ المخلوق</button>
 </div>
 
 <script>
     const client = supabase.createClient('URL', 'KEY');
-    let species = [], user = null, editId = null;
-
-    async function login() {
-        const { error } = await client.auth.signInWithPassword({ email: document.getElementById('email').value, password: document.getElementById('password').value });
-        if (error) alert(error.message); else location.reload();
-    }
+    let species = [], user = null;
 
     async function init() {
         const { data } = await client.from('species').select('*');
         species = data || [];
         user = (await client.auth.getSession()).data.session;
-        if (user) {
-            document.getElementById('add-btn').style.display = 'block';
-            document.getElementById('auth-panel').style.display = 'none';
-        }
         render();
+    }
+
+    function checkAuth() {
+        if (!user) {
+            const email = prompt("أدخل البريد الإلكتروني:");
+            const pass = prompt("أدخل كلمة المرور:");
+            client.auth.signInWithPassword({ email, password: pass }).then(res => {
+                if(res.error) alert(res.error.message); else location.reload();
+            });
+        } else {
+            document.getElementById('modal').style.display = 'block';
+        }
     }
 
     function render() {
         const q = document.getElementById('search').value.toLowerCase();
-        const filtered = species.filter(i => (i.name_ar||'').toLowerCase().includes(q) || (i.scientific_name||'').toLowerCase().includes(q));
+        const filtered = species.filter(i => (i.name_ar||'').includes(q) || (i.scientific_name||'').includes(q));
         
         let html = '';
         const kingdoms = [...new Set(filtered.map(i => i.kingdom || 'غير مصنف'))];
@@ -72,10 +70,9 @@
                 html += `
                 <div class="card">
                     <div style="color:#1b5e20; font-weight:bold">عراقي إيكو</div>
-                    <h3>${item.name_ar || 'بدون اسم'}</h3>
-                    <p><i>${item.scientific_name || ''}</i></p>
-                    <p>${item.description || 'لا يوجد وصف حالياً'}</p>
-                    ${user ? `<button onclick="del(${item.id})" style="color:red">حذف</button>` : ''}
+                    <h3>${item.name_ar}</h3>
+                    <p><i>${item.scientific_name}</i></p>
+                    <p>${item.description || ''}</p>
                 </div>`;
             });
         });
@@ -85,12 +82,9 @@
     async function addItem() {
         const name_ar = document.getElementById('n_ar').value;
         const scientific_name = document.getElementById('n_sci').value;
-        if (!name_ar || !scientific_name) return alert("الاسم مطلوب!");
         await client.from('species').insert([{ name_ar, scientific_name }]);
         location.reload();
     }
-
-    async function del(id) { await client.from('species').delete().eq('id', id); location.reload(); }
 
     init();
 </script>
