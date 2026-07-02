@@ -3,40 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <title>عراقي إيكو</title>
+    <!-- استدعاء مكتبة Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <h1>قائمة الكائنات</h1>
-    <div id="output"></div>
+    
+    <!-- زر الإضافة -->
+    <button id="add-btn" onclick="handleAuth()">إضافة مخلوق جديد</button>
+    
+    <!-- منطقة عرض البيانات -->
+    <div id="output" style="margin-top:20px;">جاري التحميل...</div>
 
     <script>
         // إعداد العميل
         const supabaseUrl = 'https://rmqtopxawrrgntcqqnpa.supabase.co';
         const supabaseKey = 'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX';
-        
         const client = supabase.createClient(supabaseUrl, supabaseKey);
 
+        // دالة عرض البيانات
         async function loadData() {
-            try {
-                // جلب البيانات من الجدول
-                const { data, error } = await client.from('species').select('*');
-                
-                if (error) {
-                    document.getElementById('output').innerText = "خطأ: " + error.message;
-                } else {
-                    // عرض البيانات
-                    document.getElementById('output').innerHTML = data.map(item => `
-                        <div style="border:1px solid #ccc; padding:10px; margin:5px;">
-                            <h3>${item.name_ar}</h3>
-                            <p>${item.scientific_name}</p>
-                        </div>
-                    `).join('');
-                }
-            } catch (err) {
-                document.getElementById('output').innerText = "حدث خطأ: " + err.message;
+            const { data, error } = await client.from('species').select('*');
+            if (error) {
+                document.getElementById('output').innerText = "خطأ في تحميل البيانات: " + error.message;
+            } else {
+                document.getElementById('output').innerHTML = data.map(item => `
+                    <div style="border:1px solid #ccc; padding:10px; margin:5px;">
+                        <h3>${item.name_ar}</h3>
+                        <p>${item.scientific_name}</p>
+                    </div>
+                `).join('');
             }
         }
 
+        // دالة الزر الذكية
+        async function handleAuth() {
+            const { data: { session } } = await client.auth.getSession();
+            
+            if (session) {
+                // المستخدم مسجل: نطلب البيانات ونضيفها
+                const nameAr = prompt("أدخل اسم المخلوق بالعربية:");
+                const sciName = prompt("أدخل الاسم العلمي:");
+                
+                if (nameAr && sciName) {
+                    const { error } = await client.from('species').insert([{ 
+                        name_ar: nameAr, 
+                        scientific_name: sciName 
+                    }]);
+                    
+                    if (error) alert("خطأ في الإضافة: " + error.message);
+                    else {
+                        alert("تمت الإضافة بنجاح!");
+                        loadData(); // تحديث القائمة فوراً
+                    }
+                }
+            } else {
+                // المستخدم غير مسجل: توجيه لتسجيل الدخول
+                const { error } = await client.auth.signInWithOAuth({
+                    provider: 'google',
+                });
+                if (error) alert("خطأ في تسجيل الدخول: " + error.message);
+            }
+        }
+
+        // تشغيل التحميل عند فتح الصفحة
         loadData();
     </script>
 </body>
