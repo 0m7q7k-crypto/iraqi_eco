@@ -2,52 +2,97 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>عراقي إيكو - لوحة التحكم</title>
+    <title>عراقي إيكو</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; margin: 0; }
+        header { background: #1b5e20; color: white; padding: 20px; text-align: center; }
+        .container { padding: 20px; }
+        .card { border: 2px solid #1b5e20; padding: 15px; margin: 10px; border-radius: 10px; background: white; width: 280px; display: inline-block; vertical-align: top; }
+        .search-box { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #1b5e20; border-radius: 5px; }
+        #modal, #editModal { display: none; position: fixed; top: 10%; right: 10%; width: 80%; background: white; padding: 20px; border: 3px solid #1b5e20; z-index: 100; border-radius: 10px; }
+    </style>
 </head>
 <body>
-    <h1>قائمة الكائنات</h1>
-    
-    <!-- واجهة تسجيل الدخول -->
-    <div id="auth-box">
-        <input type="email" id="email" placeholder="البريد الإلكتروني">
-        <input type="password" id="password" placeholder="كلمة المرور">
-        <button onclick="login()">تسجيل دخول</button>
+
+<header>
+    <h1>عراقي إيكو</h1>
+    <p>قاعدة بيانات الكائنات الحية في العراق</p>
+</header>
+
+<div class="container">
+    <div id="auth-panel">
+        <input id="email" placeholder="البريد">
+        <input id="password" type="password" placeholder="كلمة المرور">
+        <button onclick="login()">دخول</button>
     </div>
+    <input type="text" id="search" class="search-box" placeholder="بحث..." onkeyup="render()">
+    <button id="add-btn" style="display:none;" onclick="document.getElementById('modal').style.display='block'">+ إضافة مخلوق</button>
+    <div id="content"></div>
+</div>
 
-    <!-- منطقة عرض البيانات مع أزرار التحكم -->
-    <div id="output" style="margin-top:20px;"></div>
+<div id="modal">
+    <button onclick="this.parentElement.style.display='none'">✖</button>
+    <h3>إضافة مخلوق</h3>
+    <input id="n_ar" placeholder="الاسم العربي (مطلوب)"><br>
+    <input id="n_sci" placeholder="الاسم اللاتيني (مطلوب)"><br>
+    <button onclick="addItem()">حفظ</button>
+</div>
 
-    <script>
-        const supabaseUrl = 'https://rmqtopxawrrgntcqqnpa.supabase.co';
-        const supabaseKey = 'sb_publishable_M1Adw5Xf9Sq-aCSREHP6uQ_5Geps_QX';
-        const client = supabase.createClient(supabaseUrl, supabaseKey);
+<script>
+    const client = supabase.createClient('URL', 'KEY');
+    let species = [], user = null, editId = null;
 
-        async function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const { error } = await client.auth.signInWithPassword({ email, password });
-            if (error) alert(error.message);
-            else { alert("تم تسجيل الدخول!"); loadData(); }
+    async function login() {
+        const { error } = await client.auth.signInWithPassword({ email: document.getElementById('email').value, password: document.getElementById('password').value });
+        if (error) alert(error.message); else location.reload();
+    }
+
+    async function init() {
+        const { data } = await client.from('species').select('*');
+        species = data || [];
+        user = (await client.auth.getSession()).data.session;
+        if (user) {
+            document.getElementById('add-btn').style.display = 'block';
+            document.getElementById('auth-panel').style.display = 'none';
         }
+        render();
+    }
 
-        async function loadData() {
-            const { data } = await client.from('species').select('*');
-            document.getElementById('output').innerHTML = data.map(item => `
-                <div style="border:1px solid #ccc; padding:10px; margin:5px;">
-                    <h3>${item.name_ar}</h3>
-                    <button onclick="deleteItem(${item.id})">حذف</button>
-                </div>
-            `).join('');
-        }
+    function render() {
+        const q = document.getElementById('search').value.toLowerCase();
+        const filtered = species.filter(i => (i.name_ar||'').toLowerCase().includes(q) || (i.scientific_name||'').toLowerCase().includes(q));
+        
+        let html = '';
+        const kingdoms = [...new Set(filtered.map(i => i.kingdom || 'غير مصنف'))];
+        
+        kingdoms.forEach(k => {
+            html += `<h2>${k}</h2>`;
+            filtered.filter(i => (i.kingdom || 'غير مصنف') === k).forEach(item => {
+                html += `
+                <div class="card">
+                    <div style="color:#1b5e20; font-weight:bold">عراقي إيكو</div>
+                    <h3>${item.name_ar || 'بدون اسم'}</h3>
+                    <p><i>${item.scientific_name || ''}</i></p>
+                    <p>${item.description || 'لا يوجد وصف حالياً'}</p>
+                    ${user ? `<button onclick="del(${item.id})" style="color:red">حذف</button>` : ''}
+                </div>`;
+            });
+        });
+        document.getElementById('content').innerHTML = html;
+    }
 
-        async function deleteItem(id) {
-            const { error } = await client.from('species').delete().eq('id', id);
-            if (error) alert(error.message);
-            else loadData();
-        }
+    async function addItem() {
+        const name_ar = document.getElementById('n_ar').value;
+        const scientific_name = document.getElementById('n_sci').value;
+        if (!name_ar || !scientific_name) return alert("الاسم مطلوب!");
+        await client.from('species').insert([{ name_ar, scientific_name }]);
+        location.reload();
+    }
 
-        loadData();
-    </script>
+    async function del(id) { await client.from('species').delete().eq('id', id); location.reload(); }
+
+    init();
+</script>
 </body>
 </html>
